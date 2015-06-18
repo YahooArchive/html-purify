@@ -1,7 +1,7 @@
 HTML5 Purify
 ====================
 
-HTML5 Purifier - a fast and small footprint HTML5 purifier. The module uses a whitelist based approach to filter malicious characters, while keeping the resulting output HTML5 compliant. It uses <a href="https://github.com/yahoo/context-parser">context parser</a> for parsing the input string, <a href="https://github.com/yahoo/xss-filters">xss filters</a> for filtering URI attribute values and <a href="https://github.com/yahoo/css-js">css-js</a> for filtering CSS data within the HTML input.
+HTML5 Purifier - a fast and small footprint HTML5 purifier. The module uses a whitelist based approach to filter malicious characters,tags, attributes and attribute values while keeping the resulting output HTML5 compliant. It uses <a href="https://github.com/yahoo/context-parser">context parser</a> for parsing the input string, <a href="https://github.com/yahoo/xss-filters">xss filters</a> for filtering URI attribute values and <a href="https://github.com/yahoo/css-js">css-js</a> for filtering CSS data within the HTML input.
 
 ## Quick Start 
 
