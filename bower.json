@@ -1,0 +1,27 @@
+{
+  "name": "html-purify",
+  "version": "1.0.0",
+  "description": "HTML Purifier",
+  "main": "dist/html-purify.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "xss",
+    "html5"
+  ],
+  "authors": [
+    "Aditya Mahendrakar <maditya@yahoo-inc.com>",
+    "Albert Yu <albertyu@yahoo-inc.com>",
+    "Nera Liu <neraliu@yahoo-inc.com>"
+  ],
+  "license": "BSD",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

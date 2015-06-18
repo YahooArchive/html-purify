@@ -1,0 +1,15 @@
+# install
+*.log
+node_modules
+
+# test
+xunit.xml
+artifacts
+coverage
+
+# build
+docs
+
+# temp files
+*.swp
+*.swo
