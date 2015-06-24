@@ -121,7 +121,6 @@ Whitelist.Tags = [
     "wbr"
 ];
 
-
 Whitelist.Attributes = [
     "ept",
     "acceptCharset",
@@ -222,22 +221,22 @@ Whitelist.Attributes = [
 ];
 
 Whitelist.HrefAttributes = [
-"action",
-"background",
-"codebase",
-"cite",
-"classid",
-"formaction",
-"folder",
-"href",
-"icon",
-"longdesc",
-"manifest",
-"profile",
-"poster",
-"src",
-"usemap",
-"xlink:href"
+    "action",
+    "background",
+    "codebase",
+    "cite",
+    "classid",
+    "formaction",
+    "folder",
+    "href",
+    "icon",
+    "longdesc",
+    "manifest",
+    "profile",
+    "poster",
+    "src",
+    "usemap",
+    "xlink:href"
 ];
 
 module.exports = Whitelist;

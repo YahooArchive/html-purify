@@ -29,6 +29,7 @@ var CssParser = require('css-js');
         this.cssParser = new CssParser({"ver": "strict", "throwError": false});
     }
 
+    // TODO: introduce polyfill for Array.indexOf
     function contains(arr, element) {
         for (var i = 0, len = arr.length; i < len; i++) {
             if (arr[i] === element) {
@@ -55,14 +56,11 @@ var CssParser = require('css-js');
         case 1:
 	    this.output += ch;
 	    break;
+
         case 2:
-            if (prevState === 35) {
-                this.attrVals[attributeName] = attributeValue;
-            }
-            if (prevState === 36) {
-                this.attrVals[attributeName] = attributeValue;
-            }
-            if (prevState === 40) {
+            if (prevState === 35 ||
+                prevState === 36 || 
+                prevState === 40) {
                 this.attrVals[attributeName] = attributeValue;
             }
 
@@ -120,7 +118,6 @@ var CssParser = require('css-js');
             break;
         }
     }
-
 
     Purifier.prototype.purify = function (data) {
         this.output = '';
