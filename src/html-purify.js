@@ -3,18 +3,14 @@ Copyright 2015, Yahoo Inc.
 Copyrights licensed under the New BSD License.
 See the accompanying LICENSE file for terms.
 */
-
-
-var Parser = require('context-parser').Parser;
-var whitelist = require("./tag-attr-list");
-var derivedState = require('./derived-states.js');
-var xssFilters = require('xss-filters');
-var CssParser = require('css-js');
-
-
-
 (function () {
     "use strict";
+
+    var Parser = require('context-parser').Parser,
+        whitelist = require("./tag-attr-list"),
+        derivedState = require('./derived-states.js'),
+        xssFilters = require('xss-filters'),
+        CssParser = require('css-js');
 
     function Purifier() {
         var config = {
@@ -41,14 +37,12 @@ var CssParser = require('css-js');
     function processTransition(prevState, nextState, i) {
         /* jshint validthis: true */
         /* jshint expr: true */
-        var parser = this.parser,    
+        var parser = this.parser,
             ch = parser.input[i],
             attributeName = parser.getAttributeName(),
             attributeValue = parser.getAttributeValue(),
-            // TODO: use idx = getTagIndex() and parser.getCurrentTag(idx)
-            // once those functions are available in context parser 
-            idx = parser.tagIdx,
-            tagName = parser.tags[idx].toLowerCase(),
+            idx = parser.getCurrentTagIndex(),
+            tagName = parser.getCurrentTag(idx),
             attrValString = '';
 
         switch (derivedState.Transitions[prevState][nextState]) {
@@ -121,7 +115,6 @@ var CssParser = require('css-js');
         }
     }
 
-
     Purifier.prototype.purify = function (data) {
         this.output = '';
         this.attrVals = {};
@@ -133,6 +126,6 @@ var CssParser = require('css-js');
         }).contextualize(data);
         return this.output;
     };
-    module.exports = Purifier;
 
+    module.exports = Purifier;
 })();
