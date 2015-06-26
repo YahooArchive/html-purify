@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+- '0.12'
+- '0.11'
+- '0.10'
+notifications:
+  email:
+    recipients:
+    - neraliu@yahoo-inc.com
+  on_success: change
+  on_failure: always
+after_success:
+- test $(cat $TRAVIS_BUILD_DIR/package.json | grep version | awk '{print $2}' | sed
+  's/"//g' | sed 's/,//g' | awk '{print "v"$1}' ) = $TRAVIS_TAG && $TRAVIS_NODE_VERSION = '0.12' && export VALID_VERSION=true
+deploy:
+  provider: npm
+  email: neraliu@yahoo-inc.com
+  api_key:
+    secure: rgNSDdkS+FStqWW7K8KMb8IrB0KXvFma7jcYgjkvHIapxH2RIg/vQA02FXFSgwcJFzDvdMHoNzqamgaM2gEhf+N48G5Ym5w1h+lgsq8yKUROETCFmVxgUSGtxzSqpzwCevdGTN0fmQOIX+FmxSisKm3QTjU04a1hW6tMQp8jPDbxV51kRdy/xluo5ODkbFBKqhEJzFaPkrhXlLvK4UYF+ytNjskOEaoYvlo0rIFMrJg8tX9gAWhcwf4seCmDz7V4jk5Spnmh7uYdQCdtte6qifTh334gb+T8PZslIHnY2UwlONz/pqruXApQpN0VCsJPowjpvVKF5VVBdKPJ57RwedroNpgI2MNjQw7yb1raJZbD0ywUiOe7Ug2+ETWZAye+e0NsdeC++bTxNNpFvA+Ic1XmoDDdALDmlNzJVaOmGqX74Dbap/vawUgtXljtGTWcFMwNjI7/peaAzFYGQN4/XAd4TJmwrHDiPQssaJPSz4f9ACRIQ0Q6/34ehY1UMHhoUJnPGzAAv2FRQoLIzPiOdCPPx3rzHDQVy9ciutJ5g0UQZG/5SgTtvZIEUip80LLZaQ/WuZoNiJ31DgmJE6dGufeNwVuhlZBXUX6iPc2RMxJSYVz/lTDr0lV+rdveI/AbYG3WcKHqTU0AOKfqPiYawxXJgyeNMCcBtjMm9zotWV8=
+  on:
+    condition: $VALID_VERSION = true
+    tags: true
+    branch: master
