@@ -28,6 +28,19 @@ DerivedState.TransitionsSparse = {
     53: {46: 1}
 };
 
+/* this is the meaning of the key being used in below matrix
+
+0 - do nothing in the postWalk callback, so the input will be filtered out (default switch case).
+1 - append the input to the output buffer, the output buffer will be returned in the purify function call.
+2 - the core logic to handle the tagName, attribute value.
+3 - clean up the attribute value with space encounters.
+4 - set the attribute value to the attribute name when it transits to "after attribute value (quoted) state" or "before attribute name state".
+
+the following 2 handling have the assumption of canonicalization to address some parse error of the html web pages.
+5 - append the '<' with next char for markup declaration open state
+6 - set the self closing tag if solidus is encountered.
+
+*/
 DerivedState.Transitions = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
