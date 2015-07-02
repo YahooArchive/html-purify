@@ -5,6 +5,7 @@ HTML5 Purifier - a fast and small footprint HTML5 purifier. The module uses a wh
 
 [![npm version][npm-badge]][npm]
 [![dependency status][dep-badge]][dep-status]
+[![Build Status](https://travis-ci.org/yahoo/html-purify.svg?branch=master)](https://travis-ci.org/yahoo/html-purify)
 
 [npm]: https://www.npmjs.org/package/html-purify
 [npm-badge]: https://img.shields.io/npm/v/html-purify.svg?style=flat-square
