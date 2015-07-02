@@ -14,13 +14,6 @@ module.exports = function(grunt) {
         camelcase: true
       }
     },
-    copy: {
-      testResultFile: {
-        files: [
-          { dest: 'artifacts/test/node-test-results.xml', src: 'xunit.xml'}
-        ]
-      }
-    },
     mocha_istanbul: {
       coverage: {
         src: 'tests/unit',
@@ -30,8 +23,7 @@ module.exports = function(grunt) {
             lines: 80,
             statements: 80
           },
-          timeout: 10000,
-          reporter: 'xunit-file'
+          timeout: 10000
         }
       },
       target: {
@@ -65,19 +57,18 @@ module.exports = function(grunt) {
       }
     },
     clean: {
-      all: ['xunit.xml', 'artifacts', 'coverage', 'node_modules'],
-      buildResidues: ['xunit.xml', 'artifacts', 'coverage']
+      all: ['node_modules', 'artifacts'],
+      buildResidues: ['artifacts']
     }
   });
 
   grunt.loadNpmTasks('grunt-mocha-istanbul');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('test', ['jshint', 'clean:buildResidues', 'mocha_istanbul:coverage', 'copy:testResultFile']);
+  grunt.registerTask('test', ['jshint', 'clean:buildResidues', 'mocha_istanbul:coverage']);
   grunt.registerTask('unittest', ['jshint', 'clean:buildResidues', 'mocha_istanbul:target']);
 
   grunt.registerTask('default', ['test', 'browserify', 'uglify']);

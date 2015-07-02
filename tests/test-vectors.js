@@ -15,12 +15,12 @@ var html5secVectors = [
 {
 	id: 2,
 	input:  "<meta charset=\"x-imap4-modified-utf7\">&ADz&AGn&AG0&AEf&ACA&AHM&AHI&AGO&AD0&AGn&ACA&AG8Abg&AGUAcgByAG8AcgA9AGEAbABlAHIAdAAoADEAKQ&ACAAPABi",
-	output: "<meta>&ADz&AGn&AG0&AEf&ACA&AHM&AHI&AGO&AD0&AGn&ACA&AG8Abg&AGUAcgByAG8AcgA9AGEAbABlAHIAdAAoADEAKQ&ACAAPABi"
+	output: "<meta />&ADz&AGn&AG0&AEf&ACA&AHM&AHI&AGO&AD0&AGn&ACA&AG8Abg&AGUAcgByAG8AcgA9AGEAbABlAHIAdAAoADEAKQ&ACAAPABi"
 },
 {
 	id: 3,
 	input: "<meta charset=\"x-imap4-modified-utf7\">&<script&S1&TS&1>alert&A7&(1)&R&UA;&&<&A9&11/script&X&>",
-	output: "<meta>&alert&A7&(1)&R&UA;&&&lt;&A9&11/script&X&>"
+	output: "<meta />&alert&A7&(1)&R&UA;&&&lt;&A9&11/script&X&>"
 },
 {
 	id: 4,
@@ -40,12 +40,12 @@ var html5secVectors = [
 {
 	id: 7,
 	input: "<input onfocus=write(1) autofocus>",
-	output: "<input>"
+	output: "<input />"
 },
 {
 	id: 8,
 	input: "<input onblur=write(1) autofocus><input autofocus>",
-	output: "<input><input>"
+	output: "<input /><input />"
 },
 {
 	id: 9,
@@ -65,7 +65,7 @@ var html5secVectors = [
 {
 	id: 12,
 	input: "<body onscroll=alert(1)><br><br><br><br><br><br>...<br><br><br><br><input autofocus>",
-	output: "<body><br><br><br><br><br><br>...<br><br><br><br><input>"
+	output: "<body><br /><br /><br /><br /><br /><br />...<br /><br /><br /><br /><input /></body>"
 },
 {
 	id: 13,
@@ -75,7 +75,7 @@ var html5secVectors = [
 {
 	id: 14,
 	input: "<input pattern=^((a+.)a)+$ value=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!>",
-	output: "<input pattern=\"^((a+.)a)+$\" value=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\">"
+	output: "<input pattern=\"^((a+.)a)+$\" value=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\" />"
 },
 {
 	id: 15,
@@ -100,7 +100,7 @@ var html5secVectors = [
 {
 	id: 19,
 	input: "<meta charset=\"x-mac-farsi\">\xBCscript \xBEalert(1)//\xBC/script \xBE",
-	output: "<meta>\xBCscript \xBEalert(1)//\xBC/script \xBE"
+	output: "<meta />\xBCscript \xBEalert(1)//\xBC/script \xBE"
 },
 {
 	id: 20,
@@ -115,12 +115,12 @@ var html5secVectors = [
 {
 	id: 22,
 	input: "<input onblur=focus() autofocus><input>",
-	output: "<input><input>"
+	output: "<input /><input />"
 },
 {
 	id: 23,
 	input: "<form id=test onforminput=alert(1)><input></form><button form=test onformchange=alert(2)>X</button>",
-	output: "<form id=\"test\"><input></form><button form=\"test\">X</button>"
+	output: "<form id=\"test\"><input /></form><button form=\"test\">X</button>"
 },
 {
 	id: 24,
@@ -190,22 +190,22 @@ var html5secVectors = [
 {
 	id: 37,
 	input: "<!--<img src=\"--><img src=x onerror=alert(1)//\">",
-	output: "<!--<img src=\"--><img src=\"x\">"
+	output: "<!--<img src=\"--><img src=\"x\" />"
 },
 {
 	id: 38,
 	input: "<comment><img src=\"</comment><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"%3C/comment%3E%3Cimg%20src=x%20onerror=alert(1)//\">"
+	output: "<img src=\"%3C/comment%3E%3Cimg%20src=x%20onerror=alert(1)//\" />"
 },
 { 
 	id: 39, // TODO: confirm (this and certain doctype, xml ones)
 	input: "<!-- up to Opera 11.52, FF 3.6.28 -->\r\n<![><img src=\"]><img src=x onerror=alert(1)//\">\r\n\r\n<!-- IE9+, FF4+, Opera 11.60+, Safari 4.0.4+, GC7+ -->\r\n<svg><![CDATA[><image xlink:href=\"]]><img src=xx:x onerror=alert(2)//\"></svg>",
-	output: "<!-- up to Opera 11.52, FF 3.6.28 -->\n<!--![--><img src=\"%5D%3E%3Cimg%20src=x%20onerror=alert(1)//\">\n\n<!-- IE9+, FF4+, Opera 11.60+, Safari 4.0.4+, GC7+ -->\n<![CDATA[>"
+	output: "<!-- up to Opera 11.52, FF 3.6.28 -->\n<!--![--><img src=\"%5D%3E%3Cimg%20src=x%20onerror=alert(1)//\" />\n\n<!-- IE9+, FF4+, Opera 11.60+, Safari 4.0.4+, GC7+ -->\n<![CDATA[>"
 },
 {
 	id: 40,
 	input: "<style><img src=\"</style><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"x\">"
+	output: "<img src=\"x\" />"
 },
 {
 	id: 41,
@@ -215,7 +215,7 @@ var html5secVectors = [
 {
 	id: 42,
 	input: "<head><base href=\"javascript://\"/></head><body><a href=\"/. /,alert(1)//#\">XXX</a></body>",
-	output: "<head><base href=\"x-javascript://\"></head><body><a href=\"/.%20/,alert(1)//#\">XXX</a></body>"
+	output: "<head><base href=\"x-javascript://\" /></head><body><a href=\"/.%20/,alert(1)//#\">XXX</a></body>"
 },
 {
 	id: 43,
@@ -250,7 +250,7 @@ var html5secVectors = [
 {
 	id: 50,
 	input: "<OBJECT CLASSID=\"clsid:333C7BC4-460F-11D0-BC04-0080C7055A83\"><PARAM NAME=\"DataURL\" VALUE=\"javascript:alert(1)\"></OBJECT>",
-	output: "<object classid=\"clsid:333C7BC4-460F-11D0-BC04-0080C7055A83\"><param name=\"DataURL\" value=\"javascript:alert(1)\"></object>"
+	output: "<object classid=\"clsid:333C7BC4-460F-11D0-BC04-0080C7055A83\"><param name=\"DataURL\" value=\"javascript:alert(1)\" /></object>"
 },
 {
 	id: 51,
@@ -260,7 +260,7 @@ var html5secVectors = [
 {
 	id: 52,
 	input: "<embed src=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==\"></embed>",
-	output: "<embed src=\"x-data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==\"></embed>"
+	output: "<embed src=\"x-data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==\" />"
 },
 {
 	id: 53,
@@ -280,12 +280,12 @@ var html5secVectors = [
 {
 	id: 56,
 	input: "<video><source onerror=\"alert(1)\">",
-	output: "<video><source>"
+	output: "<video><source /></video>"
 },
 {
 	id: 57,
 	input: "<video onerror=\"alert(1)\"><source></source></video>",
-	output: "<video><source></source></video>"
+	output: "<video><source /></video>"
 },
 {
 	id: 58,
@@ -295,12 +295,12 @@ var html5secVectors = [
 {
 	id: 59,
 	input: "<b><script<b></b><alert(1)</script </b></b>",
-	output: "<b></b></b>"
+	output: "<b></b>"
 },
 {
 	id: 60,
 	input: "<div id=\"div1\"><input value=\"``onmouseover=alert(1)\"></div> <div id=\"div2\"></div><script>document.getElementById(\"div2\").innerHTML = document.getElementById(\"div1\").innerHTML;</script>",
-	output: "<div id=\"div1\"><input value=\"``onmouseover=alert(1)\"></div> <div id=\"div2\"></div>"
+	output: "<div id=\"div1\"><input value=\"``onmouseover=alert(1)\" /></div> <div id=\"div2\"></div>"
 },
 {
 	id: 61,
@@ -320,7 +320,7 @@ var html5secVectors = [
 {
 	id: 64,
 	input: "<embed src=\"javascript:alert(1)\"></embed> // O10.10â†“, OM10.0â†“, GC6â†“, FF\r\n<img src=\"javascript:alert(2)\">\r\n<image src=\"javascript:alert(2)\"> // IE6, O10.10â†“, OM10.0â†“\r\n<script src=\"javascript:alert(3)\"></script> // IE6, O11.01â†“, OM10.1â†“",
-	output: "<embed src=\"x-javascript:alert(1)\"></embed> // O10.10â†“, OM10.0â†“, GC6â†“, FF\n<img src=\"x-javascript:alert(2)\">\n // IE6, O10.10â†“, OM10.0â†“\n // IE6, O11.01â†“, OM10.1â†“"
+	output: "<embed src=\"x-javascript:alert(1)\" /> // O10.10â†“, OM10.0â†“, GC6â†“, FF\n<img src=\"x-javascript:alert(2)\" />\n // IE6, O10.10â†“, OM10.0â†“\n // IE6, O11.01â†“, OM10.1â†“"
 },
 {
 	id: 65,
@@ -365,7 +365,7 @@ var html5secVectors = [
 {
 	id: 73,
 	input: "<form><button formaction=\"javascript:alert(1)\">X</button>",
-	output: "<form><button formaction=\"x-javascript:alert(1)\">X</button>"
+	output: "<form><button formaction=\"x-javascript:alert(1)\">X</button></form>"
 },
 {
 	id: 74,
@@ -395,7 +395,7 @@ var html5secVectors = [
 {
 	id: 79,
 	input: "<?xml-stylesheet type=\"text/xsl\" href=\"#\"?><img xmlns=\"x-schema:test.xdr\"/>",
-	output: "<!--?xml-stylesheet type=\"text/xsl\" href=\"#\"?--><img>"
+	output: "<!--?xml-stylesheet type=\"text/xsl\" href=\"#\"?--><img />"
 },
 {
 	id: 80,
@@ -435,7 +435,7 @@ var html5secVectors = [
 {
 	id: 87,
 	input: "<body oninput=alert(1)><input autofocus>",
-	output: "<body><input>"
+	output: "<body><input /></body>"
 },
 {
 	id: 88,
@@ -515,7 +515,7 @@ var html5secVectors = [
 {
 	id: 103,
 	input: "<img src=\"x` `<script>alert(1)</script>\"` `>",
-	output: "<img src=\"x%60%20%60%3Cscript%3Ealert(1)%3C/script%3E\">"
+	output: "<img src=\"x%60%20%60%3Cscript%3Ealert(1)%3C/script%3E\" />"
 },
 {
 	id: 104,
@@ -535,7 +535,7 @@ var html5secVectors = [
 {
 	id: 107,
 	input: "<img src onerror /\" \'\"= alt=alert(1)//\">",
-	output: "<img src>"
+	output: "<img src />"
 },
 {
 	id: 108,
@@ -545,7 +545,7 @@ var html5secVectors = [
 {
 	id: 109,
 	input: "<!-- IE 5-8 standards mode -->\r\n<a href=http://foo.bar/#x=`y></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\">\r\n\r\n<!-- IE 5-9 standards mode -->\r\n<!a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(2)//\">\r\n<?a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(3)//\">",
-	output: "<!-- IE 5-8 standards mode -->\n<a href=\"http://foo.bar/#x&#61;&#96;y\"></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\">\n\n<!-- IE 5-9 standards mode -->\n<!--!a foo=x=`y--><img alt=\"`><img src=xx:x onerror=alert(2)//\">\n<!--?a foo=x=`y--><img alt=\"`><img src=xx:x onerror=alert(3)//\">"
+	output: "<!-- IE 5-8 standards mode -->\n<a href=\"http://foo.bar/#x&#61;&#96;y\"></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\" />\n\n<!-- IE 5-9 standards mode -->\n<!--!a foo=x=`y--><img alt=\"`><img src=xx:x onerror=alert(2)//\" />\n<!--?a foo=x=`y--><img alt=\"`><img src=xx:x onerror=alert(3)//\" />"
 },
 {
 	id: 110,
@@ -613,12 +613,12 @@ var generalVectors = [
 {
 	id: 7,
 	input: "<hr noshade=''/>boolean tag with empty quoted value",
-	output: "<hr>boolean tag with empty quoted value"
+	output: "<hr />boolean tag with empty quoted value"
 },
 {
 	id: 8,
 	input: "<hr noshade=\"noshad\"/>boolean tag with bogus value",
-	output: "<hr>boolean tag with bogus value"
+	output: "<hr />boolean tag with bogus value"
 },
 {
 	id: 9,
@@ -628,12 +628,12 @@ var generalVectors = [
 {
 	id: 10,
 	input: "<table><tr bz/></table>normal tag made standalone with bogus trunc attr",
-	output: "<table><tr></table>normal tag made standalone with bogus trunc attr"
+	output: "<table><tr></tr></table>normal tag made standalone with bogus trunc attr"
 },
 {
 	id: 11,
 	input: "<table><tr color/></table>normal tag made standalone with trunc attr bad val",
-	output: "<table><tr></table>normal tag made standalone with trunc attr bad val"
+	output: "<table><tr></tr></table>normal tag made standalone with trunc attr bad val"
 },
 {
 	id: 12,
@@ -643,12 +643,12 @@ var generalVectors = [
 {
 	id: 13,
 	input: "<br/ >standalone tag with space after",
-	output: "<br>standalone tag with space after"
+	output: "<br />standalone tag with space after"
 },
 {
 	id: 14,
 	input: "<table><tr size=\"4\"/></table>normal tag made standalone with value",
-	output: "<table><tr size=\"4\"></table>normal tag made standalone with value"
+	output: "<table><tr size=\"4\"></tr></table>normal tag made standalone with value"
 },
 //style attribute tests
 {

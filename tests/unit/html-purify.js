@@ -31,6 +31,12 @@ Authors: Aditya Mahendrakar <maditya@yahoo-inc.com>
             assert.equal(output, '<h1 id="foo" title="asd" checked>hello world 2</h1>');
         });
 
+        it('should always balance unopened tags', function(){
+            var html = "</div>foo</h2>bar<a href=\"123\">hello<b>world</a><embed>123</embed><p>";
+            var output = (new Purifier()).purify(html);
+            assert.equal(output, 'foobar<a href=\"123\">hello<b>world</b></a><embed />123<p></p>');
+        });
+
         it('should handle all vectors mentioned in https://html5sec.org', function(){
 	    var output, i, vector;
 	    for (var i = 0; i < html5secVectors.length; i++) {
@@ -48,7 +54,7 @@ Authors: Aditya Mahendrakar <maditya@yahoo-inc.com>
             var html = "<br /> hello world </br>"
             var output = (new Purifier()).purify(html);
 	    console.log(output);
-            assert.equal(output, '<br /> hello world </br>');
+            assert.equal(output, '<br /> hello world ');
         });
 
         it('should handle href attributes', function(){
@@ -83,13 +89,13 @@ Authors: Aditya Mahendrakar <maditya@yahoo-inc.com>
             var html = "<div style=\"color:#0000FF\">"
             var output = (new Purifier()).purify(html);
             console.log(output);
-            assert.equal(output, '<div style=\"color:#0000FF\">');
+            assert.equal(output, '<div style=\"color:#0000FF\"></div>');
 
             // invalid css
             html = "<div style=\"color;foobar\">";
             output = (new Purifier()).purify(html);
-	    console.log(output);
-      	    assert.equal(output, '<div>');
+            console.log(output);
+      	    assert.equal(output, '<div></div>');
         });
 
         it('should handle additional vectors', function(){

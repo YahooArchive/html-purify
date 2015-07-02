@@ -30,10 +30,9 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "debug": "^2.*",
     "context-parser": "^2.0.0",
-    "xss-filters": "^1.1.0",
-    "css-js": "1.0.3"
+    "css-js": "^1.0.3",
+    "xss-filters": "^1.1.0"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
@@ -43,9 +42,7 @@
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-jshint": "^0.11.0",
     "grunt-contrib-uglify": "^0.9.1",
-    "grunt-mocha-istanbul": "^2.3.0",
-    "grunt-contrib-copy": "^0.7.0",
-    "xunit-file": "0.0.6"
+    "grunt-mocha-istanbul": "^2.3.0"
   },
   "main": "./src/context-parser.js",
   "bugs": {

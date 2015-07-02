@@ -10,18 +10,21 @@ See the accompanying LICENSE file for terms.
         whitelist = require("./tag-attr-list"),
         derivedState = require('./derived-states.js'),
         xssFilters = require('xss-filters'),
-        CssParser = require('css-js');
+        CssParser = require('css-js'),
+        voidElements = whitelist.VoidElements;
 
     function Purifier() {
-        this.parser = new Parser({
+        var that = this;
+
+        that.parser = new Parser({
             enableInputPreProcessing: true,
             enableCanonicalization: true,
             enableVoidingIEConditionalComments: true
+        }).on('postWalk', function (lastState, state, i, endsWithEOF) {
+            processTransition.call(that, lastState, state, i);
         });
-        this.output = '';
-        this.attrVals = {};
-        this.hasSelfClosing = 0;
-        this.cssParser = new CssParser({"ver": "strict", "throwError": false});
+
+        that.cssParser = new CssParser({"ver": "strict", "throwError": false});
     }
 
     // TODO: introduce polyfill for Array.indexOf
@@ -38,7 +41,7 @@ See the accompanying LICENSE file for terms.
         /* jshint validthis: true */
         /* jshint expr: true */
         var parser = this.parser,
-            idx, tagName, attrValString;
+            idx, tagName, attrValString, openedTag;
 
         switch (derivedState.Transitions[prevState][nextState]) {
             
@@ -52,37 +55,54 @@ See the accompanying LICENSE file for terms.
 
             if (contains(whitelist.Tags, tagName)) {
 
-                if (prevState === 35 ||
-                    prevState === 36 || 
-                    prevState === 40) {
-                    this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
-                }
-
-                attrValString = '';
-                for (var key in this.attrVals) {
-                    if (contains(whitelist.Attributes, key)) {
-                        attrValString += " " + key;
-                        if (this.attrVals[key].length > 0) {
-                            attrValString += "=" + "\"" + this.attrVals[key] + "\"";
-                        }
+                if (idx) {
+                    // add closing tags for any opened ones before closing the current one
+                    while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
+                        this.output += '</' + openedTag + '>';
                     }
-                    else if (contains(whitelist.HrefAttributes, key)) {
-                        attrValString += " " + key;
-                        if (this.attrVals[key].length > 0) {
-                            attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   
-                        }
-                    }
-                    else if (key === "style") {// TODO: move style to a const
-                        if (this.cssParser.parseCssString(this.attrVals[key])) {
-                             attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
-                        }
+                    // openedTag is undefined if tagName is never found in all openedTags, no output needed
+                    if (openedTag) {
+                        this.output += '</' + openedTag + '>';
                     }
                 }
+                else {
+                    //  - void elements only have a start tag; end tags must not be specified for void elements.
+                    this.hasSelfClosing = this.hasSelfClosing || voidElements[tagName];
 
-                // handle self-closing tags and strip attributes in the end tag if any
-                this.output += idx ? 
-                    "</" + tagName + ">" :
-                    "<" + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
+                    // push the tagName into the openedTags stack if not found:
+                    //  - a self-closing tag or a void element
+                    !this.hasSelfClosing && this.openedTags.push(tagName);
+
+                    if (prevState === 35 ||
+                        prevState === 36 || 
+                        prevState === 40) {
+                        this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
+                    }
+
+                    attrValString = '';
+                    for (var key in this.attrVals) {
+                        if (contains(whitelist.Attributes, key)) {
+                            attrValString += " " + key;
+                            if (this.attrVals[key].length > 0) {
+                                attrValString += "=" + "\"" + this.attrVals[key] + "\"";
+                            }
+                        }
+                        else if (contains(whitelist.HrefAttributes, key)) {
+                            attrValString += " " + key;
+                            if (this.attrVals[key].length > 0) {
+                                attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   
+                            }
+                        }
+                        else if (key === "style") {// TODO: move style to a const
+                            if (this.cssParser.parseCssString(this.attrVals[key])) {
+                                 attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
+                            }
+                        }
+                    }
+
+                    // handle self-closing tags
+                    this.output += "<" + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
+                }
             }
 
             // reinitialize once tag has been written to output
@@ -109,15 +129,21 @@ See the accompanying LICENSE file for terms.
     }
 
     Purifier.prototype.purify = function (data) {
-        this.output = '';
-        this.attrVals = {};
-        this.hasSelfClosing = 0;
-        var that = this;
+        var that = this, openedTag;
 
-        this.parser.on('postWalk', function (lastState, state, i, endsWithEOF) {
-            processTransition.call(that, lastState, state, i);
-        }).contextualize(data);
-        return this.output;
+        that.output = '';
+        that.openedTags = [];
+        that.attrVals = {};
+        that.hasSelfClosing = 0;
+
+        that.parser.contextualize(data);
+
+        // close any remaining openedTags
+        while((openedTag = this.openedTags.pop())) {
+            that.output += '</' + openedTag + '>';
+        }
+
+        return that.output;
     };
 
     module.exports = Purifier;
