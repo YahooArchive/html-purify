@@ -13,12 +13,11 @@ See the accompanying LICENSE file for terms.
         CssParser = require('css-js');
 
     function Purifier() {
-        var config = {
+        this.parser = new Parser({
             enableInputPreProcessing: true,
             enableCanonicalization: true,
             enableVoidingIEConditionalComments: true
-        };
-        this.parser = new Parser(config);
+        });
         this.output = '';
         this.attrVals = {};
         this.hasSelfClosing = 0;
@@ -39,51 +38,51 @@ See the accompanying LICENSE file for terms.
         /* jshint validthis: true */
         /* jshint expr: true */
         var parser = this.parser,
-            ch = parser.input[i],
-            attributeName = parser.getAttributeName(),
-            attributeValue = parser.getAttributeValue(),
-            idx = parser.getCurrentTagIndex(),
-            tagName = parser.getCurrentTag(idx),
-            attrValString = '';
+            idx, tagName, attrValString;
 
         switch (derivedState.Transitions[prevState][nextState]) {
+            
         case derivedState.TransitionName.WITHIN_DATA:
-	    this.output += ch;
-	    break;
+            this.output += parser.input[i];
+        break;
 
         case derivedState.TransitionName.FROM_TAG_ATTR_TO_DATA:
-            if (prevState === 35 ||
-                prevState === 36 || 
-                prevState === 40) {
-                this.attrVals[attributeName] = attributeValue;
-            }
+            idx = parser.getCurrentTagIndex();
+            tagName = parser.getCurrentTag(idx);
 
-            attrValString = '';
-            for (var key in this.attrVals) {
-                if (contains(whitelist.Attributes, key)) {
-                    attrValString += " " + key;
-                    if (this.attrVals[key].length > 0) {
-                        attrValString += "=" + "\"" + this.attrVals[key] + "\"";
-                    }
-                }
-                else if (contains(whitelist.HrefAttributes, key)) {
-                    attrValString += " " + key;
-                    if (this.attrVals[key].length > 0) {
-                        attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   
-                    }
-                }
-                else if (key === "style") {// TODO: move style to a const
-                    if (this.cssParser.parseCssString(this.attrVals[key])) {
-                         attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
-                    }
-                }
-            }
-
-            // handle self-closing tags and strip attributes in the end tag if any
             if (contains(whitelist.Tags, tagName)) {
-                attrValString += (this.hasSelfClosing && !idx) ? " /" : '';
-                attrValString = idx ? "" : attrValString;
-                this.output += "<" + (idx ? "/" : "") + tagName + attrValString + ">";
+
+                if (prevState === 35 ||
+                    prevState === 36 || 
+                    prevState === 40) {
+                    this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
+                }
+
+                attrValString = '';
+                for (var key in this.attrVals) {
+                    if (contains(whitelist.Attributes, key)) {
+                        attrValString += " " + key;
+                        if (this.attrVals[key].length > 0) {
+                            attrValString += "=" + "\"" + this.attrVals[key] + "\"";
+                        }
+                    }
+                    else if (contains(whitelist.HrefAttributes, key)) {
+                        attrValString += " " + key;
+                        if (this.attrVals[key].length > 0) {
+                            attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   
+                        }
+                    }
+                    else if (key === "style") {// TODO: move style to a const
+                        if (this.cssParser.parseCssString(this.attrVals[key])) {
+                             attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
+                        }
+                    }
+                }
+
+                // handle self-closing tags and strip attributes in the end tag if any
+                this.output += idx ? 
+                    "</" + tagName + ">" :
+                    "<" + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
             }
 
             // reinitialize once tag has been written to output
@@ -92,23 +91,19 @@ See the accompanying LICENSE file for terms.
             break;
 
         case derivedState.TransitionName.ATTR_TO_AFTER_ATTR:
-            this.attrVals[attributeName] = '';
+            this.attrVals[parser.getAttributeName()] = '';
             break;
 
         case derivedState.TransitionName.ATTR_VAL_TO_AFTER_ATTR_VAL:
-            this.attrVals[attributeName] = attributeValue;
+            this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
             break;
 
         case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
-            this.output += "<";
-            this.output += ch;
+            this.output += "<" + parser.input[i];
             break;
 
         case derivedState.TransitionName.TO_SELF_CLOSING_START:
             this.hasSelfClosing = 1;
-            break;
-
-        default:
             break;
         }
     }
