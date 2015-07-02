@@ -38,25 +38,23 @@ See the accompanying LICENSE file for terms.
         /* jshint validthis: true */
         /* jshint expr: true */
         var parser = this.parser,
-            ch = parser.input[i],
-            attributeName = parser.getAttributeName(),
-            attributeValue = parser.getAttributeValue(),
-            idx = parser.getCurrentTagIndex(),
-            tagName = parser.getCurrentTag(idx),
-            attrValString = '';
+            idx, tagName, attrValString;
 
         switch (derivedState.Transitions[prevState][nextState]) {
         case 1:
-            this.output += ch;
+            this.output += parser.input[i];
         break;
 
         case 2:
+            idx = parser.getCurrentTagIndex();
+            tagName = parser.getCurrentTag(idx);
+
             if (contains(whitelist.Tags, tagName)) {
 
                 if (prevState === 35 ||
                     prevState === 36 || 
                     prevState === 40) {
-                    this.attrVals[attributeName] = attributeValue;
+                    this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
                 }
 
                 attrValString = '';
@@ -92,23 +90,19 @@ See the accompanying LICENSE file for terms.
             break;
 
         case 3:
-            this.attrVals[attributeName] = '';
+            this.attrVals[parser.getAttributeName()] = '';
             break;
 
         case 4:
-            this.attrVals[attributeName] = attributeValue;
+            this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
             break;
 
         case 5:
-            this.output += "<";
-            this.output += ch;
+            this.output += "<" + parser.input[i];
             break;
 
         case 6:
             this.hasSelfClosing = 1;
-            break;
-
-        default:
             break;
         }
     }
