@@ -47,11 +47,11 @@ See the accompanying LICENSE file for terms.
             attrValString = '';
 
         switch (derivedState.Transitions[prevState][nextState]) {
-        case 1:
+        case derivedState.TransitionName.WITHIN_DATA:
 	    this.output += ch;
 	    break;
 
-        case 2:
+        case derivedState.TransitionName.FROM_TAG_ATTR_TO_DATA:
             if (prevState === 35 ||
                 prevState === 36 || 
                 prevState === 40) {
@@ -91,20 +91,20 @@ See the accompanying LICENSE file for terms.
             this.hasSelfClosing = 0;
             break;
 
-        case 3:
+        case derivedState.TransitionName.ATTR_TO_AFTER_ATTR:
             this.attrVals[attributeName] = '';
             break;
 
-        case 4:
+        case derivedState.TransitionName.ATTR_VAL_TO_AFTER_ATTR_VAL:
             this.attrVals[attributeName] = attributeValue;
             break;
 
-        case 5:
+        case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
             this.output += "<";
             this.output += ch;
             break;
 
-        case 6:
+        case derivedState.TransitionName.TO_SELF_CLOSING_START:
             this.hasSelfClosing = 1;
             break;
 
