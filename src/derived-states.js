@@ -28,19 +28,30 @@ DerivedState.TransitionsSparse = {
     53: {46: 1}
 };
 
-/* this is the meaning of the key being used in below matrix
+DerivedState.TransitionName = {};
 
-0 - do nothing in the postWalk callback, so the input will be filtered out (default switch case).
-1 - append the input to the output buffer, the output buffer will be returned in the purify function call.
-2 - the core logic to handle the tagName, attribute value.
-3 - clean up the attribute value with space encounters.
-4 - set the attribute value to the attribute name when it transits to "after attribute value (quoted) state" or "before attribute name state".
+// do nothing in the postWalk callback, input will be filtered out (default case)
+DerivedState.TransitionName.NO_ACTION = 0;
 
-the following 2 handling have the assumption of canonicalization to address some parse error of the html web pages.
-5 - append the '<' with next char for markup declaration open state
-6 - set the self closing tag if solidus is encountered.
+// append the input to the output buffer,
+// the output buffer will be returned in the purify function call
+DerivedState.TransitionName.WITHIN_DATA = 1;
 
-*/
+// core logic to handle the tagName, attribute and its value
+DerivedState.TransitionName.FROM_TAG_ATTR_TO_DATA = 2;
+
+// initialize/clean up the attribute value
+DerivedState.TransitionName.ATTR_TO_AFTER_ATTR = 3;
+
+// map the attribute value to the attribute name
+DerivedState.TransitionName.ATTR_VAL_TO_AFTER_ATTR_VAL = 4;
+
+// append the '<' with next char for markup declaration open state
+DerivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN = 5;
+
+// set the self closing tag if solidus is encountered
+DerivedState.TransitionName.TO_SELF_CLOSING_START = 6;
+
 DerivedState.Transitions = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
