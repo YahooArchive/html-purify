@@ -51,6 +51,7 @@ See the accompanying LICENSE file for terms.
         var parser = this.parser,
             idx, tagName, attrValString, openedTag;
 
+        
         switch (derivedState.Transitions[prevState][nextState]) {
             
         case derivedState.TransitionName.WITHIN_DATA:
@@ -87,7 +88,7 @@ See the accompanying LICENSE file for terms.
                     this.config.enableTagBalancing && !this.hasSelfClosing && this.openedTags.push(tagName);
 
                     if (prevState === 35 ||
-                        prevState === 36 || 
+                        prevState === 36 ||
                         prevState === 40) {
                         this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
                     }
@@ -96,39 +97,42 @@ See the accompanying LICENSE file for terms.
                     for (var key in this.attrVals) {
                         if (contains(whitelist.Attributes, key)) {
                             attrValString += " " + key;
-                            if (this.attrVals[key].length > 0) {
+                            if (this.attrVals[key] !== null) {
                                 attrValString += "=" + "\"" + this.attrVals[key] + "\"";
                             }
                         }
                         else if (contains(whitelist.HrefAttributes, key)) {
                             attrValString += " " + key;
-                            if (this.attrVals[key].length > 0) {
+                            if (this.attrVals[key] !== null) {
                                 attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   
                             }
                         }
                         else if (key === "style") {// TODO: move style to a const
-                            if (this.cssParser.parseCssString(this.attrVals[key])) {
-                                 attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
+                            if (this.attrVals[key] === null) {
+                                attrValString += " " + key + "=" + "\"\"";
+                            }
+                            else if (this.cssParser.parseCssString(this.attrVals[key])) {
+                                attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
                             }
                         }
                     }
 
                     // handle self-closing tags
                     this.output += "<" + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
+
                 }
             }
-
             // reinitialize once tag has been written to output
             this.attrVals = {};
             this.hasSelfClosing = 0;
             break;
 
         case derivedState.TransitionName.ATTR_TO_AFTER_ATTR:
-            this.attrVals[parser.getAttributeName()] = '';
+            this.attrVals[parser.getAttributeName()] = null;
             break;
 
         case derivedState.TransitionName.ATTR_VAL_TO_AFTER_ATTR_VAL:
-            this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
+            this.attrVals[parser.getAttributeName()] = parser.getAttributeValue() || '';
             break;
 
         case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
@@ -136,6 +140,10 @@ See the accompanying LICENSE file for terms.
             break;
 
         case derivedState.TransitionName.TO_SELF_CLOSING_START:
+            // boolean attributes may not have a value
+            if (prevState === 35) {
+                this.attrVals[parser.getAttributeName()] = null;
+            }
             this.hasSelfClosing = 1;
             break;
         }

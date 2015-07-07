@@ -30,9 +30,9 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "context-parser": "^2.0.0",
-    "css-js": "^1.0.3",
-    "xss-filters": "^1.2.3"
+    "context-parser": "^2.0.1",
+    "xss-filters": "^1.2.3",
+    "css-js": "1.0.3"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",

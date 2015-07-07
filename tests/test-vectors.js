@@ -628,12 +628,12 @@ var generalVectors = [
 {
 	id: 10,
 	input: "<table><tr bz/></table>normal tag made standalone with bogus trunc attr",
-	output: "<table><tr></tr></table>normal tag made standalone with bogus trunc attr"
+	output: "<table><tr /></table>normal tag made standalone with bogus trunc attr"
 },
 {
 	id: 11,
 	input: "<table><tr color/></table>normal tag made standalone with trunc attr bad val",
-	output: "<table><tr></tr></table>normal tag made standalone with trunc attr bad val"
+	output: "<table><tr /></table>normal tag made standalone with trunc attr bad val"
 },
 {
 	id: 12,
@@ -648,7 +648,7 @@ var generalVectors = [
 {
 	id: 14,
 	input: "<table><tr size=\"4\"/></table>normal tag made standalone with value",
-	output: "<table><tr size=\"4\"></tr></table>normal tag made standalone with value"
+	output: "<table><tr size=\"4\" /></table>normal tag made standalone with value"
 },
 //style attribute tests
 {
@@ -765,8 +765,62 @@ var generalVectors = [
 	id: 37,
 	input: "<div style=\"color:))))) green\">parenthesis test 5</div>",
 	output: "<div>parenthesis test 5</div>"
+},
+{
+	id: 38,
+	input: "<img />",
+	output: "<img />"
+},
+{
+	id: 39,
+	input: "<img id=\"foo\" />",
+	output: "<img id=\"foo\" />"
+},
+{
+	id: 40,
+	input: "<option selected />",
+	output: "<option selected />"
+},
+{
+	id: 41,
+	input:  "<img id=\"foo\" / src=\"bar.com\">",
+	output: "<img id=\"foo\" src=\"bar.com\" />"
+},
+{
+	id: 42,
+	input: "<img/>",
+	output: "<img />"
+},
+{
+	id: 43,
+	input: "<img id=\"foo\"/>",
+	output: "<img id=\"foo\" />"
+},
+{
+	id: 44,
+	input: "<option selected/>",
+	output: "<option selected />"
+},
+{
+	id: 45,
+	input: "<img id=\'foo\'/>",
+	output: "<img id=\"foo\" />"
+},
+{
+	id: 46,
+	input: "<img id=\'foo\' />",
+	output: "<img id=\"foo\" />"
+},
+{
+	id: 47,
+	input: "<img id=\"\" />",
+	output: "<img id=\"\" />"
+},
+{
+	id: 48,
+	input: "<img id=\'\' />",
+	output: "<img id=\"\" />"
 }
-
 ];
 
 exports.html5secVectors = html5secVectors;
