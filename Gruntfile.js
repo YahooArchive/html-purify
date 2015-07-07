@@ -38,6 +38,32 @@ module.exports = function(grunt) {
         src: 'tests/unit'
       }
     },
+    browserify: {
+      standalone: {
+        src: 'src/<%= pkg.name %>.js',
+        dest: 'dist/<%= pkg.name %>.js',
+        options: {
+          browserifyOptions: {
+            standalone: 'Purifier'
+          }
+        }
+      },
+    },
+    uglify: {
+      options: {
+        banner: ['/**',
+            ' * <%= pkg.name %> - v<%= pkg.version %>',
+            ' * Yahoo! Inc. Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.',
+            ' */', ''].join('\n'),
+        compress: {
+          join_vars: true
+        }
+      },
+      buildMin: {
+        src: ['dist/<%= pkg.name %>.js'],
+        dest: 'dist/<%= pkg.name %>.min.js'
+      }
+    },
     clean: {
       all: ['xunit.xml', 'artifacts', 'coverage', 'node_modules'],
       buildResidues: ['xunit.xml', 'artifacts', 'coverage']
@@ -48,10 +74,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   grunt.registerTask('test', ['jshint', 'clean:buildResidues', 'mocha_istanbul:coverage', 'copy:testResultFile']);
   grunt.registerTask('unittest', ['jshint', 'clean:buildResidues', 'mocha_istanbul:target']);
 
-  grunt.registerTask('default', ['test']);
+  grunt.registerTask('default', ['test', 'browserify', 'uglify']);
 
 };
