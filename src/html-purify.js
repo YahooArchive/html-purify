@@ -13,13 +13,21 @@ See the accompanying LICENSE file for terms.
         CssParser = require('css-js'),
         voidElements = whitelist.VoidElements;
 
-    function Purifier() {
+    function Purifier(config) {
         var that = this;
+
+        config = config || {};
+        // defaulted to true
+        config.enableCanonicalization = config.enableCanonicalization !== false;
+        config.enableVoidingIEConditionalComments = config.enableVoidingIEConditionalComments !== false;
+        config.enableTagBalancing = config.enableTagBalancing !== false;
+
+        that.config = config;
 
         that.parser = new Parser({
             enableInputPreProcessing: true,
-            enableCanonicalization: true,
-            enableVoidingIEConditionalComments: true
+            enableCanonicalization: config.enableCanonicalization,
+            enableVoidingIEConditionalComments: config.enableVoidingIEConditionalComments
         }).on('postWalk', function (lastState, state, i, endsWithEOF) {
             processTransition.call(that, lastState, state, i);
         });
@@ -56,13 +64,18 @@ See the accompanying LICENSE file for terms.
             if (contains(whitelist.Tags, tagName)) {
 
                 if (idx) {
-                    // add closing tags for any opened ones before closing the current one
-                    while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
-                        this.output += '</' + openedTag + '>';
+                    if (this.config.enableTagBalancing) {
+                        // add closing tags for any opened ones before closing the current one
+                        while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
+                            this.output += '</' + openedTag + '>';
+                        }
+                        // openedTag is undefined if tagName is never found in all openedTags, no output needed
+                        if (openedTag) {
+                            this.output += '</' + openedTag + '>';
+                        }
                     }
-                    // openedTag is undefined if tagName is never found in all openedTags, no output needed
-                    if (openedTag) {
-                        this.output += '</' + openedTag + '>';
+                    else {
+                        this.output += '</' + tagName + '>';
                     }
                 }
                 else {
@@ -71,7 +84,7 @@ See the accompanying LICENSE file for terms.
 
                     // push the tagName into the openedTags stack if not found:
                     //  - a self-closing tag or a void element
-                    !this.hasSelfClosing && this.openedTags.push(tagName);
+                    this.config.enableTagBalancing && !this.hasSelfClosing && this.openedTags.push(tagName);
 
                     if (prevState === 35 ||
                         prevState === 36 || 
@@ -138,9 +151,11 @@ See the accompanying LICENSE file for terms.
 
         that.parser.contextualize(data);
 
-        // close any remaining openedTags
-        while((openedTag = this.openedTags.pop())) {
-            that.output += '</' + openedTag + '>';
+        if (that.config.enableTagBalancing) {
+            // close any remaining openedTags
+            while((openedTag = this.openedTags.pop())) {
+                that.output += '</' + openedTag + '>';
+            }
         }
 
         return that.output;

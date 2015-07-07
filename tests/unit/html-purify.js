@@ -32,9 +32,15 @@ Authors: Aditya Mahendrakar <maditya@yahoo-inc.com>
         });
 
         it('should always balance unopened tags', function(){
-            var html = "</div>foo</h2>bar<a href=\"123\">hello<b>world</a><embed>123</embed><p>";
+            var html = "</div>foo</h2>bar<a href=\"123\">hello<b>world</a><embed>123</embed><br /><br/><p>";
+
+            // with tag balancing enabled by default
             var output = (new Purifier()).purify(html);
-            assert.equal(output, 'foobar<a href=\"123\">hello<b>world</b></a><embed />123<p></p>');
+            assert.equal(output, 'foobar<a href=\"123\">hello<b>world</b></a><embed />123<br /><br /><p></p>');
+
+            // with tag balancing disabled
+            var output = (new Purifier({enableTagBalancing:false})).purify(html);
+            assert.equal(output, "</div>foo</h2>bar<a href=\"123\">hello<b>world</a><embed />123</embed><br /><br /><p>");
         });
 
         it('should handle all vectors mentioned in https://html5sec.org', function(){
