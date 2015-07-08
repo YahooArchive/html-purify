@@ -14,7 +14,10 @@ See the accompanying LICENSE file for terms.
         voidElements = whitelist.VoidElements;
 
     function Purifier(config) {
-        var that = this;
+        var that = this,
+            hrefAttributesWhitelist = whitelist.HrefAttributes,
+            attributesWhitelist = whitelist.Attributes,
+            custHrefAttributesWhiteList = [];
 
         config = config || {};
         // defaulted to true
@@ -22,7 +25,28 @@ See the accompanying LICENSE file for terms.
         config.enableVoidingIEConditionalComments = config.enableVoidingIEConditionalComments !== false;
         config.enableTagBalancing = config.enableTagBalancing !== false;
 
+        // accept array of attributes to be whitelisted, default list in tag-attr-list.js
+        if (config.whitelistAttributes) {
+            // re-populate attributesWhitelist and hrefAttributesWhitelist based on config.whitelistAttributes
+            attributesWhitelist = [];
+            for (var i = 0, len = config.whitelistAttributes.length; i < len; i++) {
+                var element = config.whitelistAttributes[i];
+                if (contains(hrefAttributesWhitelist, element)) {
+                    custHrefAttributesWhiteList.push(element);
+                } else {
+                    attributesWhitelist.push(element);
+                }
+            }
+            hrefAttributesWhitelist = custHrefAttributesWhiteList;
+        }
+        
         that.config = config;
+
+        // accept array of tags to be whitelisted, default list in tag-attr-list.js
+        that.tagsWhitelist = config.whitelistTags || whitelist.Tags;
+
+        that.hrefAttributesWhitelist = hrefAttributesWhitelist;
+        that.attributesWhitelist = attributesWhitelist;
 
         that.parser = new Parser({
             enableInputPreProcessing: true,
@@ -62,7 +86,7 @@ See the accompanying LICENSE file for terms.
             idx = parser.getCurrentTagIndex();
             tagName = parser.getCurrentTag(idx);
 
-            if (contains(whitelist.Tags, tagName)) {
+            if (contains(this.tagsWhitelist, tagName)) {
 
                 if (idx) {
                     if (this.config.enableTagBalancing) {
@@ -95,13 +119,13 @@ See the accompanying LICENSE file for terms.
 
                     attrValString = '';
                     for (var key in this.attrVals) {
-                        if (contains(whitelist.Attributes, key)) {
+                        if (contains(this.attributesWhitelist, key)) {
                             attrValString += " " + key;
                             if (this.attrVals[key] !== null) {
                                 attrValString += "=" + "\"" + this.attrVals[key] + "\"";
                             }
                         }
-                        else if (contains(whitelist.HrefAttributes, key)) {
+                        else if (contains(this.hrefAttributesWhitelist, key)) {
                             attrValString += " " + key;
                             if (this.attrVals[key] !== null) {
                                 attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   

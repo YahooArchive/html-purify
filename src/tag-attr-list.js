@@ -5,7 +5,6 @@ See the accompanying LICENSE file for terms.
 */
 
 // The tags and attributes listed here are based on http://facebook.github.io/react/docs/tags-and-attributes.html
-// For uri attributes such as background, cite, href, longdesc, src, usemap (not whitelisted so far), we can potentially use https://git.corp.yahoo.com/paranoids/xss-filters
 var Whitelist = {};
 
 Whitelist.Tags = [
@@ -125,19 +124,17 @@ Whitelist.Attributes = [
     "ept",
     "acceptCharset",
     "accessKey",
-    "action",
     "allowFullScreen",
     "allowTransparency",
     "alt",
     "async",
     "autoComplete",
-    "autoFocus",
+    "autofocus",
     "autoPlay",
     "cellPadding",
     "cellSpacing",
-    "charSet",
+    "charset",
     "checked",
-    "classID",
     "className",
     "cols",
     "colSpan",
@@ -156,7 +153,6 @@ Whitelist.Attributes = [
     "draggable",
     "encType",
     "form",
-    "formAction",
     "formEncType",
     "formMethod",
     "formNoValidate",
@@ -172,7 +168,6 @@ Whitelist.Attributes = [
     "lang",
     "list",
     "loop",
-    "manifest",
     "marginHeight",
     "marginWidth",
     "max",
@@ -188,7 +183,6 @@ Whitelist.Attributes = [
     "open",
     "pattern",
     "placeholder",
-    "poster",
     "preload",
     "radioGroup",
     "readOnly",
@@ -236,7 +230,10 @@ Whitelist.HrefAttributes = [
     "poster",
     "src",
     "usemap",
-    "xlink:href"
+    "xlink:href",
+    "xml:base",
+    "xmlns",
+    "xmlns:xlink"
 ];
 
 // Void elements only have a start tag; end tags must not be specified for void elements.
