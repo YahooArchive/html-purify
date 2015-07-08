@@ -220,7 +220,7 @@ var html5secVectors = [
 {
 	id: 43,
 	input: "<?xml version=\"1.0\" standalone=\"no\"?>\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head>\r\n<style type=\"text/css\">\r\n@font-face {font-family: y; src: url(\"font.svg#x\") format(\"svg\");} body {font: 100px \"y\";}\r\n</style>\r\n</head>\r\n<body>Hello</body>\r\n</html>",
-	output: "<!--?xml version=\"1.0\" standalone=\"no\"?-->\n<html>\n<head>\n\n</head>\n<body>Hello</body>\n</html>"
+	output: "<!--?xml version=\"1.0\" standalone=\"no\"?-->\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n\n</head>\n<body>Hello</body>\n</html>"
 },
 {
 	id: 45,
@@ -395,7 +395,7 @@ var html5secVectors = [
 {
 	id: 79,
 	input: "<?xml-stylesheet type=\"text/xsl\" href=\"#\"?><img xmlns=\"x-schema:test.xdr\"/>",
-	output: "<!--?xml-stylesheet type=\"text/xsl\" href=\"#\"?--><img />"
+	output: "<!--?xml-stylesheet type=\"text/xsl\" href=\"#\"?--><img xmlns=\"x-schema:test.xdr\" />"
 },
 {
 	id: 80,
@@ -440,7 +440,7 @@ var html5secVectors = [
 {
 	id: 88,
 	input: "<svg xmlns=\"http://www.w3.org/2000/svg\">\n<a xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"javascript:alert(1)\"><rect width=\"1000\" height=\"1000\" fill=\"white\"/></a>\n</svg>",
-	output: "\n<a xlink:href=\"x-javascript:alert(1)\"></a>\n"
+	output: "\n<a xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"x-javascript:alert(1)\"></a>\n"
 },
 {
 	id: 89,

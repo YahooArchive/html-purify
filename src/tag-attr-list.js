@@ -220,6 +220,7 @@ Whitelist.Attributes = [
     "wmode"
 ];
 
+// Initial list seeded off of https://github.com/yahoo/secure-handlebars/blob/master/src/parser-utils.js#L31
 Whitelist.HrefAttributes = [
     "action",
     "background",
@@ -236,7 +237,10 @@ Whitelist.HrefAttributes = [
     "poster",
     "src",
     "usemap",
-    "xlink:href"
+    "xlink:href",
+    "xml:base",
+    "xmlns",
+    "xmlns:xlink"
 ];
 
 // Void elements only have a start tag; end tags must not be specified for void elements.
