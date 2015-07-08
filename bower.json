@@ -8,12 +8,16 @@
   ],
   "keywords": [
     "xss",
-    "html5"
+    "html",
+    "sanitize",
+    "purify",
+    "purifier"
   ],
   "authors": [
     "Aditya Mahendrakar <maditya@yahoo-inc.com>",
-    "Albert Yu <albertyu@yahoo-inc.com>",
-    "Nera Liu <neraliu@yahoo-inc.com>"
+    "Nera Liu <neraliu@yahoo-inc.com>",
+    "Adonis Fung <adon@yahoo-inc.com>",
+    "Albert Yu <albertyu@yahoo-inc.com>"
   ],
   "license": "BSD",
   "private": true,
@@ -22,6 +26,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "artifacts"
   ]
 }
