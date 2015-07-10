@@ -156,7 +156,7 @@ See the accompanying LICENSE file for terms.
         that.openedTags = [];
         that.attrVals = {};
         that.hasSelfClosing = 0;
-
+        that.parser.reset();
         that.parser.contextualize(data);
 
         if (that.config.enableTagBalancing) {
