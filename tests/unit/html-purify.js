@@ -59,21 +59,21 @@ Authors: Aditya Mahendrakar <maditya@yahoo-inc.com>
         it('should allow self-closing tags', function(){
             var html = "<br /> hello world </br>"
             var output = (new Purifier()).purify(html);
-	    console.log(output);
+            console.log(output);
             assert.equal(output, '<br /> hello world ');
         });
 
         it('should handle href attributes', function(){
             var html = "<a href=\"http://www.yahoo.com\">yahoo</a>";
             var output = (new Purifier()).purify(html);
-	    console.log(output);
+            console.log(output);
             assert.equal(output, '<a href="http://www.yahoo.com">yahoo</a>');
         });
 
         it('should handle js in href attributes', function(){
             var html = "<a href=\"javascript:alert(1)\">yahoo</a>";
             var output = (new Purifier()).purify(html);
-	    console.log(output);
+            console.log(output);
             assert.equal(output, '<a href="x-javascript:alert(1)">yahoo</a>');
         });
 
