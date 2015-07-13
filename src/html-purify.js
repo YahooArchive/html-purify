@@ -7,46 +7,29 @@ See the accompanying LICENSE file for terms.
     "use strict";
 
     var Parser = require('context-parser').Parser,
-        whitelist = require("./tag-attr-list"),
+        tagAttList = require("./tag-attr-list"),
         derivedState = require('./derived-states.js'),
         xssFilters = require('xss-filters'),
         CssParser = require('css-js'),
-        voidElements = whitelist.VoidElements;
+        hrefAttribtues = tagAttList.HrefAttributes,
+        voidElements = tagAttList.VoidElements;
 
     function Purifier(config) {
-        var that = this,
-            hrefAttributesWhitelist = whitelist.HrefAttributes,
-            attributesWhitelist = whitelist.Attributes,
-            custHrefAttributesWhiteList = [];
+        var that = this;
 
         config = config || {};
         // defaulted to true
         config.enableCanonicalization = config.enableCanonicalization !== false;
         config.enableVoidingIEConditionalComments = config.enableVoidingIEConditionalComments !== false;
+
         config.enableTagBalancing = config.enableTagBalancing !== false;
 
+        // accept array of tags to be whitelisted, default list in tag-attr-list.js
+        that.tagsWhitelist = config.whitelistTags || tagAttList.WhiteListTags;
         // accept array of attributes to be whitelisted, default list in tag-attr-list.js
-        if (config.whitelistAttributes) {
-            // re-populate attributesWhitelist and hrefAttributesWhitelist based on config.whitelistAttributes
-            attributesWhitelist = [];
-            for (var i = 0, len = config.whitelistAttributes.length; i < len; i++) {
-                var element = config.whitelistAttributes[i];
-                if (contains(hrefAttributesWhitelist, element)) {
-                    custHrefAttributesWhiteList.push(element);
-                } else {
-                    attributesWhitelist.push(element);
-                }
-            }
-            hrefAttributesWhitelist = custHrefAttributesWhiteList;
-        }
+        that.attributesWhitelist = config.whitelistAttributes || tagAttList.WhiteListAttributes;
         
         that.config = config;
-
-        // accept array of tags to be whitelisted, default list in tag-attr-list.js
-        that.tagsWhitelist = config.whitelistTags || whitelist.Tags;
-
-        that.hrefAttributesWhitelist = hrefAttributesWhitelist;
-        that.attributesWhitelist = attributesWhitelist;
 
         that.parser = new Parser({
             enableInputPreProcessing: true,
@@ -73,7 +56,7 @@ See the accompanying LICENSE file for terms.
         /* jshint validthis: true */
         /* jshint expr: true */
         var parser = this.parser,
-            idx, tagName, attrValString, openedTag;
+            idx, tagName, attrValString, openedTag, key, value;
 
         
         switch (derivedState.Transitions[prevState][nextState]) {
@@ -118,31 +101,29 @@ See the accompanying LICENSE file for terms.
                     }
 
                     attrValString = '';
-                    for (var key in this.attrVals) {
+                    for (key in this.attrVals) {
                         if (contains(this.attributesWhitelist, key)) {
-                            attrValString += " " + key;
-                            if (this.attrVals[key] !== null) {
-                                attrValString += "=" + "\"" + this.attrVals[key] + "\"";
+                            value = this.attrVals[key];
+
+                            if (key === "style") { // TODO: move style to a const
+                                if (value === null) {
+                                    attrValString += ' ' + key + '=""';
+                                }
+                                else if (this.cssParser.parseCssString(value)) {
+                                    attrValString += ' ' + key + '="' + value + '"';
+                                }
+                                continue;
                             }
-                        }
-                        else if (contains(this.hrefAttributesWhitelist, key)) {
-                            attrValString += " " + key;
-                            if (this.attrVals[key] !== null) {
-                                attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   
-                            }
-                        }
-                        else if (key === "style") {// TODO: move style to a const
-                            if (this.attrVals[key] === null) {
-                                attrValString += " " + key + "=" + "\"\"";
-                            }
-                            else if (this.cssParser.parseCssString(this.attrVals[key])) {
-                                attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
+
+                            attrValString += ' ' + key;
+                            if (value !== null) {
+                                attrValString += '="' + (hrefAttribtues[key] ? xssFilters.uriInDoubleQuotedAttr(decodeURI(value)) : value) + '"';
                             }
                         }
                     }
 
                     // handle self-closing tags
-                    this.output += "<" + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
+                    this.output += '<' + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
 
                 }
             }
