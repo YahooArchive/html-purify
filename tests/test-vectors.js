@@ -55,7 +55,7 @@ var html5secVectors = [
 {
 	id: 10,
 	input: "<video poster=javascript:alert(1)//></video>",
-	output: "<video poster=\"javascript:alert(1)//\"></video>"
+	output: "<video poster=\"x-javascript:alert(1)//\"></video>"
 },
 {
 	id: 11,
