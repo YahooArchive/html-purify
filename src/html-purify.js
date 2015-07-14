@@ -7,11 +7,12 @@ See the accompanying LICENSE file for terms.
     "use strict";
 
     var Parser = require('context-parser').Parser,
-        whitelist = require("./tag-attr-list"),
+        tagAttList = require("./tag-attr-list"),
         derivedState = require('./derived-states.js'),
         xssFilters = require('xss-filters'),
         CssParser = require('css-js'),
-        voidElements = whitelist.VoidElements;
+        hrefAttribtues = tagAttList.HrefAttributes,
+        voidElements = tagAttList.VoidElements;
 
     function Purifier(config) {
         var that = this;
@@ -20,8 +21,14 @@ See the accompanying LICENSE file for terms.
         // defaulted to true
         config.enableCanonicalization = config.enableCanonicalization !== false;
         config.enableVoidingIEConditionalComments = config.enableVoidingIEConditionalComments !== false;
+
         config.enableTagBalancing = config.enableTagBalancing !== false;
 
+        // accept array of tags to be whitelisted, default list in tag-attr-list.js
+        that.tagsWhitelist = config.whitelistTags || tagAttList.WhiteListTags;
+        // accept array of attributes to be whitelisted, default list in tag-attr-list.js
+        that.attributesWhitelist = config.whitelistAttributes || tagAttList.WhiteListAttributes;
+        
         that.config = config;
 
         that.parser = new Parser({
@@ -49,7 +56,7 @@ See the accompanying LICENSE file for terms.
         /* jshint validthis: true */
         /* jshint expr: true */
         var parser = this.parser,
-            idx, tagName, attrValString, openedTag;
+            idx, tagName, attrValString, openedTag, key, value;
 
         
         switch (derivedState.Transitions[prevState][nextState]) {
@@ -62,7 +69,7 @@ See the accompanying LICENSE file for terms.
             idx = parser.getCurrentTagIndex();
             tagName = parser.getCurrentTag(idx);
 
-            if (contains(whitelist.Tags, tagName)) {
+            if (contains(this.tagsWhitelist, tagName)) {
 
                 if (idx) {
                     if (this.config.enableTagBalancing) {
@@ -94,31 +101,29 @@ See the accompanying LICENSE file for terms.
                     }
 
                     attrValString = '';
-                    for (var key in this.attrVals) {
-                        if (contains(whitelist.Attributes, key)) {
-                            attrValString += " " + key;
-                            if (this.attrVals[key] !== null) {
-                                attrValString += "=" + "\"" + this.attrVals[key] + "\"";
+                    for (key in this.attrVals) {
+                        if (contains(this.attributesWhitelist, key)) {
+                            value = this.attrVals[key];
+
+                            if (key === "style") { // TODO: move style to a const
+                                if (value === null) {
+                                    attrValString += ' ' + key + '=""';
+                                }
+                                else if (this.cssParser.parseCssString(value)) {
+                                    attrValString += ' ' + key + '="' + value + '"';
+                                }
+                                continue;
                             }
-                        }
-                        else if (contains(whitelist.HrefAttributes, key)) {
-                            attrValString += " " + key;
-                            if (this.attrVals[key] !== null) {
-                                attrValString += "=" + "\"" + xssFilters.uriInDoubleQuotedAttr(decodeURI(this.attrVals[key])) + "\"";   
-                            }
-                        }
-                        else if (key === "style") {// TODO: move style to a const
-                            if (this.attrVals[key] === null) {
-                                attrValString += " " + key + "=" + "\"\"";
-                            }
-                            else if (this.cssParser.parseCssString(this.attrVals[key])) {
-                                attrValString += " " + key + "=" + "\"" + this.attrVals[key] + "\"";
+
+                            attrValString += ' ' + key;
+                            if (value !== null) {
+                                attrValString += '="' + (hrefAttribtues[key] ? xssFilters.uriInDoubleQuotedAttr(decodeURI(value)) : value) + '"';
                             }
                         }
                     }
 
                     // handle self-closing tags
-                    this.output += "<" + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
+                    this.output += '<' + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
 
                 }
             }

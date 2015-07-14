@@ -15,12 +15,12 @@ var html5secVectors = [
 {
 	id: 2,
 	input:  "<meta charset=\"x-imap4-modified-utf7\">&ADz&AGn&AG0&AEf&ACA&AHM&AHI&AGO&AD0&AGn&ACA&AG8Abg&AGUAcgByAG8AcgA9AGEAbABlAHIAdAAoADEAKQ&ACAAPABi",
-	output: "<meta />&ADz&AGn&AG0&AEf&ACA&AHM&AHI&AGO&AD0&AGn&ACA&AG8Abg&AGUAcgByAG8AcgA9AGEAbABlAHIAdAAoADEAKQ&ACAAPABi"
+	output: "<meta charset=\"x-imap4-modified-utf7\" />&ADz&AGn&AG0&AEf&ACA&AHM&AHI&AGO&AD0&AGn&ACA&AG8Abg&AGUAcgByAG8AcgA9AGEAbABlAHIAdAAoADEAKQ&ACAAPABi"
 },
 {
 	id: 3,
 	input: "<meta charset=\"x-imap4-modified-utf7\">&<script&S1&TS&1>alert&A7&(1)&R&UA;&&<&A9&11/script&X&>",
-	output: "<meta />&alert&A7&(1)&R&UA;&&&lt;&A9&11/script&X&>"
+	output: "<meta charset=\"x-imap4-modified-utf7\" />&alert&A7&(1)&R&UA;&&&lt;&A9&11/script&X&>"
 },
 {
 	id: 4,
@@ -40,12 +40,12 @@ var html5secVectors = [
 {
 	id: 7,
 	input: "<input onfocus=write(1) autofocus>",
-	output: "<input />"
+	output: "<input autofocus />"
 },
 {
 	id: 8,
 	input: "<input onblur=write(1) autofocus><input autofocus>",
-	output: "<input /><input />"
+	output: "<input autofocus /><input autofocus />"
 },
 {
 	id: 9,
@@ -55,7 +55,7 @@ var html5secVectors = [
 {
 	id: 10,
 	input: "<video poster=javascript:alert(1)//></video>",
-	output: "<video poster=\"javascript:alert(1)//\"></video>"
+	output: "<video poster=\"x-javascript:alert(1)//\"></video>"
 },
 {
 	id: 11,
@@ -65,7 +65,7 @@ var html5secVectors = [
 {
 	id: 12,
 	input: "<body onscroll=alert(1)><br><br><br><br><br><br>...<br><br><br><br><input autofocus>",
-	output: "<body><br /><br /><br /><br /><br /><br />...<br /><br /><br /><br /><input /></body>"
+	output: "<body><br /><br /><br /><br /><br /><br />...<br /><br /><br /><br /><input autofocus /></body>"
 },
 {
 	id: 13,
@@ -100,7 +100,7 @@ var html5secVectors = [
 {
 	id: 19,
 	input: "<meta charset=\"x-mac-farsi\">\xBCscript \xBEalert(1)//\xBC/script \xBE",
-	output: "<meta />\xBCscript \xBEalert(1)//\xBC/script \xBE"
+	output: "<meta charset=\"x-mac-farsi\" />\xBCscript \xBEalert(1)//\xBC/script \xBE"
 },
 {
 	id: 20,
@@ -115,7 +115,7 @@ var html5secVectors = [
 {
 	id: 22,
 	input: "<input onblur=focus() autofocus><input>",
-	output: "<input /><input />"
+	output: "<input autofocus /><input />"
 },
 {
 	id: 23,
@@ -220,7 +220,7 @@ var html5secVectors = [
 {
 	id: 43,
 	input: "<?xml version=\"1.0\" standalone=\"no\"?>\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head>\r\n<style type=\"text/css\">\r\n@font-face {font-family: y; src: url(\"font.svg#x\") format(\"svg\");} body {font: 100px \"y\";}\r\n</style>\r\n</head>\r\n<body>Hello</body>\r\n</html>",
-	output: "<!--?xml version=\"1.0\" standalone=\"no\"?-->\n<html>\n<head>\n\n</head>\n<body>Hello</body>\n</html>"
+	output: "<!--?xml version=\"1.0\" standalone=\"no\"?-->\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n\n</head>\n<body>Hello</body>\n</html>"
 },
 {
 	id: 45,
@@ -395,7 +395,7 @@ var html5secVectors = [
 {
 	id: 79,
 	input: "<?xml-stylesheet type=\"text/xsl\" href=\"#\"?><img xmlns=\"x-schema:test.xdr\"/>",
-	output: "<!--?xml-stylesheet type=\"text/xsl\" href=\"#\"?--><img />"
+	output: "<!--?xml-stylesheet type=\"text/xsl\" href=\"#\"?--><img xmlns=\"x-schema:test.xdr\" />"
 },
 {
 	id: 80,
@@ -435,12 +435,12 @@ var html5secVectors = [
 {
 	id: 87,
 	input: "<body oninput=alert(1)><input autofocus>",
-	output: "<body><input /></body>"
+	output: "<body><input autofocus /></body>"
 },
 {
 	id: 88,
 	input: "<svg xmlns=\"http://www.w3.org/2000/svg\">\n<a xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"javascript:alert(1)\"><rect width=\"1000\" height=\"1000\" fill=\"white\"/></a>\n</svg>",
-	output: "\n<a xlink:href=\"x-javascript:alert(1)\"></a>\n"
+	output: "\n<a xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"x-javascript:alert(1)\"></a>\n"
 },
 {
 	id: 89,

@@ -115,5 +115,37 @@ Authors: Aditya Mahendrakar <maditya@yahoo-inc.com>
                 assert.equal(output, generalVectors[i].output);
 	    }
         });
+
+        it('should allow user specified whitelisted tags ', function(){
+            var html = "<h1 id=\"foo\" title=\"asd\" checked>hello world</h1>";
+            var output = (new Purifier({whitelistTags: ['h1', 'h2']})).purify(html);
+            assert.equal(output, '<h1 id="foo" title="asd" checked>hello world</h1>');
+        });
+
+        it('should not allow tags absent in user specified whitelisted tags ', function(){
+            var html = "<h1 id=\"foo\" title=\"asd\" checked>hello world</h1><h3>hello again</h3>";
+            var output = (new Purifier({whitelistTags: ['h1', 'h2']})).purify(html);
+            assert.equal(output, '<h1 id="foo" title="asd" checked>hello world</h1>hello again');
+        });
+
+        it('should allow user specified whitelisted attributes ', function(){
+            var html = "<h1 id=\"foo\" title=\"asd\" checked>hello world</h1>";
+            var output = (new Purifier({whitelistAttributes: ['id', 'title', 'checked']})).purify(html);
+            assert.equal(output, '<h1 id="foo" title="asd" checked>hello world</h1>');
+        });
+
+        it('should not allow attributes absent in user specified whitelisted attributes ', function(){
+            var html = "<h1 id=\"foo\" title=\"asd\" checked>hello world</h1>";
+            var output = (new Purifier({whitelistAttributes: ['id', 'checked']})).purify(html);
+            assert.equal(output, '<h1 id="foo" checked>hello world</h1>');
+        });
+
+        it('should correctly filter user specified href attributes ', function(){
+            var html = "<img src=\"javascript:alert(1);\" /><h1 id=\"foo\"></h1><a href=\"javascript:alert(1);\">bar</a>";
+            var output = (new Purifier({whitelistAttributes: ['id', 'title', 'src','checked', 'href'], whitelistTags: ['img', 'h1']})).purify(html);
+            assert.equal(output, '<img src=\"x-javascript:alert(1);\" /><h1 id=\"foo\"></h1>bar');
+        });
+
+	
     });
 }());
