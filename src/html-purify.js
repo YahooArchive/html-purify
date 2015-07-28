@@ -36,7 +36,9 @@ See the accompanying LICENSE file for terms.
             enableCanonicalization: config.enableCanonicalization,
             enableVoidingIEConditionalComments: config.enableVoidingIEConditionalComments
         }).on('postWalk', function (lastState, state, i, endsWithEOF) {
-            processTransition.call(that, lastState, state, i);
+            if (lastState < 44 && state < 44) { // && (lastState !== state || state === 1)) {
+                processTransition.call(that, lastState, state, i);
+            }
         });
 
         that.cssParser = new CssParser({"ver": "strict", "throwError": false});
