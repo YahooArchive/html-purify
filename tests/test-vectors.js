@@ -90,7 +90,7 @@ var html5secVectors = [
 {
 	id: 17,
 	input: "<?xml-stylesheet href=\"javascript:alert(1)\"?><root/>",
-	output: "<!--?xml-stylesheet href=\"javascript:alert(1)\"?-->"
+	output: ""
 },
 {
 	id: 18,
@@ -190,7 +190,7 @@ var html5secVectors = [
 {
 	id: 37,
 	input: "<!--<img src=\"--><img src=x onerror=alert(1)//\">",
-	output: "<!--<img src=\"--><img src=\"x\" />"
+	output: "<img src=\"x\" />"
 },
 {
 	id: 38,
@@ -200,7 +200,7 @@ var html5secVectors = [
 { 
 	id: 39, // TODO: confirm (this and certain doctype, xml ones)
 	input: "<!-- up to Opera 11.52, FF 3.6.28 -->\r\n<![><img src=\"]><img src=x onerror=alert(1)//\">\r\n\r\n<!-- IE9+, FF4+, Opera 11.60+, Safari 4.0.4+, GC7+ -->\r\n<svg><![CDATA[><image xlink:href=\"]]><img src=xx:x onerror=alert(2)//\"></svg>",
-	output: "<!-- up to Opera 11.52, FF 3.6.28 -->\n<!--![--><img src=\"%5D%3E%3Cimg%20src=x%20onerror=alert(1)//\" />\n\n<!-- IE9+, FF4+, Opera 11.60+, Safari 4.0.4+, GC7+ -->\n<![CDATA[>"
+	output: "\n<img src=\"%5D%3E%3Cimg%20src=x%20onerror=alert(1)//\" />\n\n\n"
 },
 {
 	id: 40,
@@ -220,7 +220,7 @@ var html5secVectors = [
 {
 	id: 43,
 	input: "<?xml version=\"1.0\" standalone=\"no\"?>\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head>\r\n<style type=\"text/css\">\r\n@font-face {font-family: y; src: url(\"font.svg#x\") format(\"svg\");} body {font: 100px \"y\";}\r\n</style>\r\n</head>\r\n<body>Hello</body>\r\n</html>",
-	output: "<!--?xml version=\"1.0\" standalone=\"no\"?-->\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n\n</head>\n<body>Hello</body>\n</html>"
+	output: "\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n\n</head>\n<body>Hello</body>\n</html>"
 },
 {
 	id: 45,
@@ -315,7 +315,7 @@ var html5secVectors = [
 {
 	id: 63,
 	input: "<!-- IE 6-8 -->\r\n<x \'=\"foo\"><x foo=\'><img src=x onerror=alert(1)//\'>\r\n\r\n<!-- IE 6-9 -->\r\n<! \'=\"foo\"><x foo=\'><img src=x onerror=alert(2)//\'>\r\n<? \'=\"foo\"><x foo=\'><img src=x onerror=alert(3)//\'>",
-	output: "<!-- IE 6-8 -->\n\n\n<!-- IE 6-9 -->\n<!--! \'=\"foo\"-->\n<!--? \'=\"foo\"-->"
+	output: "\n\n\n\n\n"
 },
 {
 	id: 64,
@@ -325,7 +325,7 @@ var html5secVectors = [
 {
 	id: 65,
 	input: "<!DOCTYPE x[<!ENTITY x SYSTEM \"http://htmlsec.org/test.xxe\">]><y>&x;</y>",
-	output: "<!--!DOCTYPE x[<!ENTITY x SYSTEM \"http://htmlsec.org/test.xxe\"--><!doctype html>]>&x;"
+	output: "]>&x;"
 },
 {
 	id: 66,
@@ -335,12 +335,12 @@ var html5secVectors = [
 {
 	id: 67,
 	input: "<?xml version=\"1.0\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"data:,%3Cxsl:transform version=\'1.0\' xmlns:xsl=\'http://www.w3.org/1999/XSL/Transform\' id=\'xss\'%3E%3Cxsl:output method=\'html\'/%3E%3Cxsl:template match=\'/\'%3E%3Cscript%3Ealert(1)%3C/script%3E%3C/xsl:template%3E%3C/xsl:transform%3E\"?>\n<root/>",
-	output: "<!--?xml version=\"1.0\"?-->\n<!--?xml-stylesheet type=\"text/xsl\" href=\"data:,%3Cxsl:transform version=\'1.0\' xmlns:xsl=\'http://www.w3.org/1999/XSL/Transform\' id=\'xss\'%3E%3Cxsl:output method=\'html\'/%3E%3Cxsl:template match=\'/\'%3E%3Cscript%3Ealert(1)%3C/script%3E%3C/xsl:template%3E%3C/xsl:transform%3E\"?-->\n"
+	output: "\n\n"
 },
 {
 	id: 68,
 	input: "<!DOCTYPE x [\r\n\t<!ATTLIST img xmlns CDATA \"http://www.w3.org/1999/xhtml\" src CDATA \"xx:x\"\r\n onerror CDATA \"alert(1)\"\r\n onload CDATA \"alert(2)\">\r\n]><img />",
-	output: "<!--!DOCTYPE x [\n\t<!ATTLIST img xmlns CDATA \"http://www.w3.org/1999/xhtml\" src CDATA \"xx:x\"\n onerror CDATA \"alert(1)\"\n onload CDATA \"alert(2)\"--><!doctype html>\n]><img />"
+	output: "\n]><img />"
 },
 {
 	id: 69,
@@ -360,7 +360,7 @@ var html5secVectors = [
 {
 	id: 72,
 	input: "<// style=x:expression\\28write(1)\\29>",
-	output: "<!--// style=x:expression\\28write(1)\\29-->"
+	output: ""
 },
 {
 	id: 73,
@@ -385,17 +385,17 @@ var html5secVectors = [
 {
 	id: 77,
 	input: "<?xml-stylesheet type=\"text/css\"?><!DOCTYPE x SYSTEM \"test.dtd\"><x>&x;</x>",
-	output: "<!--?xml-stylesheet type=\"text/css\"?--><!--!DOCTYPE x SYSTEM \"test.dtd\"--><!doctype html>&x;"
+	output: "&x;"
 },
 {
 	id: 78,
 	input: "<?xml-stylesheet type=\"text/css\"?><root style=\"x:expression(write(1))\"/>",
-	output: "<!--?xml-stylesheet type=\"text/css\"?-->"
+	output: ""
 },
 {
 	id: 79,
 	input: "<?xml-stylesheet type=\"text/xsl\" href=\"#\"?><img xmlns=\"x-schema:test.xdr\"/>",
-	output: "<!--?xml-stylesheet type=\"text/xsl\" href=\"#\"?--><img xmlns=\"x-schema:test.xdr\" />"
+	output: "<img xmlns=\"x-schema:test.xdr\" />"
 },
 {
 	id: 80,
@@ -415,7 +415,7 @@ var html5secVectors = [
 {
 	id: 83,
 	input: "<?xml-stylesheet type=\"text/css\" href=\"data:,*%7bx:expression(write(2));%7d\"?>",
-	output: "<!--?xml-stylesheet type=\"text/css\" href=\"data:,*%7bx:expression(write(2));%7d\"?-->"
+	output: ""
 },
 {
 	id: 84,
@@ -455,12 +455,12 @@ var html5secVectors = [
 {
 	id: 91,
 	input: "<!-- Up to Opera 10.63 -->\r\n<div style=content:url(test2.svg)></div>\r\n\r\n<!-- Up to Opera 11.64 - see link below -->\r\n\r\n<!-- Up to Opera 12.x -->\r\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>",
-	output: "<!-- Up to Opera 10.63 -->\n<div style=\"content:url(test2.svg)\"></div>\n\n<!-- Up to Opera 11.64 - see link below -->\n\n<!-- Up to Opera 12.x -->\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>"
+	output: "\n<div style=\"content:url(test2.svg)\"></div>\n\n\n\n\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>"
 },
 {
 	id: 92,
 	input: "[A]\n<? foo=\"><script>alert(1)</script>\">\n<! foo=\"><script>alert(1)</script>\">\n</ foo=\"><script>alert(1)</script>\">\n[B]\n<? foo=\"><x foo=\'?><script>alert(1)</script>\'>\">\n[C]\n<! foo=\"[[[x]]\"><x foo=\"]foo><script>alert(1)</script>\">\n[D]\n<% foo><x foo=\"%><script>alert(1)</script>\">",
-	output: "[A]\n<!--? foo=\"-->\">\n<!--! foo=\"-->\">\n<!--/ foo=\"-->\">\n[B]\n<!--? foo=\"-->\">\n[C]\n<!--! foo=\"[[[x]]\"-->\n[D]\n&lt;% foo>"
+	output: "[A]\n\">\n\">\n\">\n[B]\n\">\n[C]\n\n[D]\n&lt;% foo>"
 },
 {
 	id: 93,
@@ -490,7 +490,7 @@ var html5secVectors = [
 {
 	id: 98,
 	input: "<!-- IE 5-9 -->\r\n<div id=d><x xmlns=\"><iframe onload=alert(1)\"></div>\n<script>d.innerHTML+=\'\';</script>\r\n\r\n<!-- IE 10 in IE5-9 Standards mode -->\r\n<div id=d><x xmlns=\'\"><iframe onload=alert(2)//\'></div>\n<script>d.innerHTML+=\'\';</script>",
-	output: "<!-- IE 5-9 -->\n<div id=\"d\"></div>\n\n\n<!-- IE 10 in IE5-9 Standards mode -->\n<div id=\"d\"></div>\n"
+	output: "\n<div id=\"d\"></div>\n\n\n\n<div id=\"d\"></div>\n"
 },
 {
 	id: 99,
@@ -545,7 +545,7 @@ var html5secVectors = [
 {
 	id: 109,
 	input: "<!-- IE 5-8 standards mode -->\r\n<a href=http://foo.bar/#x=`y></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\">\r\n\r\n<!-- IE 5-9 standards mode -->\r\n<!a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(2)//\">\r\n<?a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(3)//\">",
-	output: "<!-- IE 5-8 standards mode -->\n<a href=\"http://foo.bar/#x&#61;&#96;y\"></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\" />\n\n<!-- IE 5-9 standards mode -->\n<!--!a foo=x=`y--><img alt=\"`><img src=xx:x onerror=alert(2)//\" />\n<!--?a foo=x=`y--><img alt=\"`><img src=xx:x onerror=alert(3)//\" />"
+	output: "\n<a href=\"http://foo.bar/#x&#61;&#96;y\"></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\" />\n\n\n<img alt=\"`><img src=xx:x onerror=alert(2)//\" />\n<img alt=\"`><img src=xx:x onerror=alert(3)//\" />"
 },
 {
 	id: 110,
@@ -820,6 +820,17 @@ var generalVectors = [
 	id: 48,
 	input: "<img id=\'\' />",
 	output: "<img id=\"\" />"
+},
+{
+	id: 49,
+	// TODO: html-purified content is not designed for comment state
+	input: " 123 --> abc", 
+	output: " 123 --> abc"
+},
+{
+	id: 50,
+	input: "abc <!-- 123",
+	output: "abc "
 }
 ];
 
