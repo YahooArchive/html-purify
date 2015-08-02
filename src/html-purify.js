@@ -33,6 +33,7 @@ See the accompanying LICENSE file for terms.
 
         that.parser = new Parser({
             enableInputPreProcessing: true,
+            enableStateTracking: false,
             enableCanonicalization: config.enableCanonicalization,
             enableVoidingIEConditionalComments: config.enableVoidingIEConditionalComments
         }).on('postWalk', function (lastState, state, i, endsWithEOF) {
