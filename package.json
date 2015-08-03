@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "context-parser": "^2.0.1",
-    "xss-filters": "^1.2.3",
+    "xss-filters": "^1.2.6",
     "css-js": "1.0.3"
   },
   "devDependencies": {

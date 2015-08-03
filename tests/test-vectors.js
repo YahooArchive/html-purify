@@ -395,7 +395,7 @@ var html5secVectors = [
 {
 	id: 79,
 	input: "<?xml-stylesheet type=\"text/xsl\" href=\"#\"?><img xmlns=\"x-schema:test.xdr\"/>",
-	output: "<img xmlns=\"x-schema:test.xdr\" />"
+	output: "<img xmlns=\"x-x-schema:test.xdr\" />"
 },
 {
 	id: 80,
