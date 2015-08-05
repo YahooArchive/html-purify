@@ -37,9 +37,7 @@ See the accompanying LICENSE file for terms.
             enableCanonicalization: config.enableCanonicalization,
             enableVoidingIEConditionalComments: config.enableVoidingIEConditionalComments
         }).on('postWalk', function (lastState, state, i, endsWithEOF) {
-            if (lastState < 44 && state < 44) { // && (lastState !== state || state === 1)) {
                 processTransition.call(that, lastState, state, i);
-            }
         });
 
         that.cssParser = new CssParser({"ver": "strict", "throwError": false});
@@ -143,9 +141,9 @@ See the accompanying LICENSE file for terms.
             this.attrVals[parser.getAttributeName()] = parser.getAttributeValue() || '';
             break;
 
-        case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
-            this.output += "<" + parser.input[i];
-            break;
+        //case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
+        //    this.output += "<" + parser.input[i];
+	    //    break;
 
         case derivedState.TransitionName.TO_SELF_CLOSING_START:
             // boolean attributes may not have a value
