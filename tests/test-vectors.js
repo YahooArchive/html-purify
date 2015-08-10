@@ -55,7 +55,7 @@ var html5secVectors = [
 {
 	id: 10,
 	input: "<video poster=javascript:alert(1)//></video>",
-	output: "<video poster=\"x-javascript:alert(1)//\"></video>"
+	output: "<video poster=x-javascript:alert(1)//></video>"
 },
 {
 	id: 11,
@@ -75,7 +75,7 @@ var html5secVectors = [
 {
 	id: 14,
 	input: "<input pattern=^((a+.)a)+$ value=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!>",
-	output: "<input pattern=\"^((a+.)a)+$\" value=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\" />"
+	output: "<input pattern=^((a+.)a)+$ value=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa! />"
 },
 {
 	id: 15,
@@ -120,7 +120,7 @@ var html5secVectors = [
 {
 	id: 23,
 	input: "<form id=test onforminput=alert(1)><input></form><button form=test onformchange=alert(2)>X</button>",
-	output: "<form id=\"test\"><input /></form><button form=\"test\">X</button>"
+	output: "<form id=test><input /></form><button form=test>X</button>"
 },
 {
 	id: 24,
@@ -180,7 +180,7 @@ var html5secVectors = [
 {
 	id: 35,
 	input: "1<a href=#><line xmlns=urn:schemas-microsoft-com:vml style=behavior:url(#default#vml);position:absolute href=javascript:alert(1) strokecolor=white strokeweight=1000px from=0 to=1000 /></a>",
-	output: "1<a href=\"#\"></a>"
+	output: "1<a href=#></a>"
 },
 {
 	id: 36,
@@ -190,7 +190,7 @@ var html5secVectors = [
 {
 	id: 37,
 	input: "<!--<img src=\"--><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"x\" />"
+	output: "<img src=x />"
 },
 {
 	id: 38,
@@ -205,7 +205,7 @@ var html5secVectors = [
 {
 	id: 40,
 	input: "<style><img src=\"</style><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"x\" />"
+	output: "<img src=x />"
 },
 {
 	id: 41,
@@ -490,12 +490,12 @@ var html5secVectors = [
 {
 	id: 98,
 	input: "<!-- IE 5-9 -->\r\n<div id=d><x xmlns=\"><iframe onload=alert(1)\"></div>\n<script>d.innerHTML+=\'\';</script>\r\n\r\n<!-- IE 10 in IE5-9 Standards mode -->\r\n<div id=d><x xmlns=\'\"><iframe onload=alert(2)//\'></div>\n<script>d.innerHTML+=\'\';</script>",
-	output: "\n<div id=\"d\"></div>\n\n\n\n<div id=\"d\"></div>\n"
+	output: "\n<div id=d></div>\n\n\n\n<div id=d></div>\n"
 },
 {
 	id: 99,
 	input: "<div id=d><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n<script>with(document.getElementById(\"d\"))innerHTML=innerHTML</script>",
-	output: "<div id=\"d\"><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n"
+	output: "<div id=d><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n"
 },
 {
 	id: 100,
@@ -545,7 +545,7 @@ var html5secVectors = [
 {
 	id: 109,
 	input: "<!-- IE 5-8 standards mode -->\r\n<a href=http://foo.bar/#x=`y></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\">\r\n\r\n<!-- IE 5-9 standards mode -->\r\n<!a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(2)//\">\r\n<?a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(3)//\">",
-	output: "\n<a href=\"http://foo.bar/#x&#61;&#96;y\"></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\" />\n\n\n<img alt=\"`><img src=xx:x onerror=alert(2)//\" />\n<img alt=\"`><img src=xx:x onerror=alert(3)//\" />"
+	output: "\n<a href=http://foo.bar/#x&#61;&#96;y></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\" />\n\n\n<img alt=\"`><img src=xx:x onerror=alert(2)//\" />\n<img alt=\"`><img src=xx:x onerror=alert(3)//\" />"
 },
 {
 	id: 110,
@@ -804,12 +804,12 @@ var generalVectors = [
 {
 	id: 45,
 	input: "<img id=\'foo\'/>",
-	output: "<img id=\"foo\" />"
+	output: "<img id=\'foo\' />"
 },
 {
 	id: 46,
 	input: "<img id=\'foo\' />",
-	output: "<img id=\"foo\" />"
+	output: "<img id=\'foo\' />"
 },
 {
 	id: 47,
@@ -819,7 +819,7 @@ var generalVectors = [
 {
 	id: 48,
 	input: "<img id=\'\' />",
-	output: "<img id=\"\" />"
+	output: "<img id=\'\' />"
 },
 {
 	id: 49,
@@ -831,6 +831,11 @@ var generalVectors = [
 	id: 50,
 	input: "abc <!-- 123",
 	output: "abc "
+},
+{
+	id: 51,
+	input: "<img src=\"x\" id=\'\" onerror=\"alert(1)\' />",
+	output: "<img src=\"x\" id=\'\" onerror=\"alert(1)\' />"
 }
 ];
 
