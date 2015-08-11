@@ -195,12 +195,12 @@ var html5secVectors = [
 {
 	id: 38,
 	input: "<comment><img src=\"</comment><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"%3C/comment%3E%3Cimg%20src=x%20onerror=alert(1)//\" />"
+	output: "<img src=\"</comment><img src=x onerror=alert(1)//\" />"
 },
 { 
 	id: 39, // TODO: confirm (this and certain doctype, xml ones)
 	input: "<!-- up to Opera 11.52, FF 3.6.28 -->\r\n<![><img src=\"]><img src=x onerror=alert(1)//\">\r\n\r\n<!-- IE9+, FF4+, Opera 11.60+, Safari 4.0.4+, GC7+ -->\r\n<svg><![CDATA[><image xlink:href=\"]]><img src=xx:x onerror=alert(2)//\"></svg>",
-	output: "\n<img src=\"%5D%3E%3Cimg%20src=x%20onerror=alert(1)//\" />\n\n\n"
+	output: "\n<img src=\"]><img src=x onerror=alert(1)//\" />\n\n\n"
 },
 {
 	id: 40,
@@ -210,12 +210,12 @@ var html5secVectors = [
 {
 	id: 41,
 	input: "<li style=list-style:url() onerror=alert(1)></li>\n<div style=content:url(data:image/svg+xml,%3Csvg/%3E);visibility:hidden onload=alert(1)></div>",
-	output: "<li style=\"list-style:url()\"></li>\n<div style=\"content:url(data:image/svg+xml,%3Csvg/%3E);visibility:hidden\"></div>"
+	output: "<li style=list-style:url()></li>\n<div style=content:url(data:image/svg+xml,%3Csvg/%3E);visibility:hidden></div>"
 },
 {
 	id: 42,
 	input: "<head><base href=\"javascript://\"/></head><body><a href=\"/. /,alert(1)//#\">XXX</a></body>",
-	output: "<head><base href=\"x-javascript://\" /></head><body><a href=\"/.%20/,alert(1)//#\">XXX</a></body>"
+	output: "<head><base href=\"x-javascript://\" /></head><body><a href=\"/. /,alert(1)//#\">XXX</a></body>"
 },
 {
 	id: 43,
@@ -355,7 +355,7 @@ var html5secVectors = [
 {
 	id: 71,
 	input: "<div style=width:1px;filter:glow onfilterchange=alert(1)>x</div>",
-	output: "<div style=\"width:1px;filter:glow\">x</div>"
+	output: "<div style=width:1px;filter:glow>x</div>"
 },
 {
 	id: 72,
@@ -455,7 +455,7 @@ var html5secVectors = [
 {
 	id: 91,
 	input: "<!-- Up to Opera 10.63 -->\r\n<div style=content:url(test2.svg)></div>\r\n\r\n<!-- Up to Opera 11.64 - see link below -->\r\n\r\n<!-- Up to Opera 12.x -->\r\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>",
-	output: "\n<div style=\"content:url(test2.svg)\"></div>\n\n\n\n\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>"
+	output: "\n<div style=content:url(test2.svg)></div>\n\n\n\n\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>"
 },
 {
 	id: 92,
@@ -510,12 +510,12 @@ var html5secVectors = [
 {
 	id: 102,
 	input: "<a href=\"[a]java[b]script[c]:alert(1)\">XXX</a>",
-	output: "<a href=\"%5Ba%5Djava%5Bb%5Dscript%5Bc%5D:alert(1)\">XXX</a>"
+	output: "<a href=\"[a]java[b]script[c]:alert(1)\">XXX</a>"
 },
 {
 	id: 103,
 	input: "<img src=\"x` `<script>alert(1)</script>\"` `>",
-	output: "<img src=\"x%60%20%60%3Cscript%3Ealert(1)%3C/script%3E\" />"
+	output: "<img src=\"x` `<script>alert(1)</script>\" />"
 },
 {
 	id: 104,
@@ -669,7 +669,7 @@ var generalVectors = [
 {
 	id: 18,
 	input: "<div style=' color: blue;'>rodent 2 is ok</div>",
-	output: "<div style=\" color: blue;\">rodent 2 is ok</div>"
+	output: "<div style=' color: blue;'>rodent 2 is ok</div>"
 },
 {
 	id: 19,
@@ -679,7 +679,7 @@ var generalVectors = [
 {
 	id: 20,
 	input: "<div style=' color: blue '>rodent 4 is ok</div>",
-	output: "<div style=\" color: blue \">rodent 4 is ok</div>"
+	output: "<div style=' color: blue '>rodent 4 is ok</div>"
 },
 {
 	id: 21,
@@ -699,7 +699,7 @@ var generalVectors = [
 {
 	id: 24,
 	input: "<div style=>no style value at all</div>",
-	output: "<div style=\"\">no style value at all</div>"
+	output: "<div style>no style value at all</div>"
 },
 {
 	id: 25,
@@ -734,7 +734,7 @@ var generalVectors = [
 {
 	id: 31,
 	input: "<div style=color:blue>unquoted style attribute</div>",
-	output: "<div style=\"color:blue\">unquoted style attribute</div>"
+	output: "<div style=color:blue>unquoted style attribute</div>"
 },
 {
 	id: 32,
