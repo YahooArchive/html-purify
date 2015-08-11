@@ -129,7 +129,7 @@ See the accompanying LICENSE file for terms.
                 }
                 else {
                     //  - void elements only have a start tag; end tags must not be specified for void elements.
-                    this.hasSelfClosing = this.hasSelfClosing || voidElements[tagName];
+                    this.hasSelfClosing = /*this.hasSelfClosing ||*/ voidElements[tagName];
 
                     // push the tagName into the openedTags stack if not found:
                     //  - a self-closing tag or a void element
@@ -148,12 +148,12 @@ See the accompanying LICENSE file for terms.
             }
             // reinitialize once tag has been written to output
             this.attrVals = {};
-            this.hasSelfClosing = false;
+            // this.hasSelfClosing = false;
             break;
 
-        case derivedState.TransitionName.TO_SELF_CLOSING_START:
-            this.hasSelfClosing = true;
-            break;
+        // case derivedState.TransitionName.TO_SELF_CLOSING_START:
+        //     this.hasSelfClosing = true;
+        //     break;
         }
     }
 
@@ -163,7 +163,7 @@ See the accompanying LICENSE file for terms.
         that.output = '';
         that.openedTags = [];
         that.attrVals = {};
-        that.hasSelfClosing = false;
+        // that.hasSelfClosing = false;
         that.parser.reset();
         that.parser.contextualize(data);
 

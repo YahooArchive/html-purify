@@ -628,12 +628,12 @@ var generalVectors = [
 {
 	id: 10,
 	input: "<table><tr bz/></table>normal tag made standalone with bogus trunc attr",
-	output: "<table><tr /></table>normal tag made standalone with bogus trunc attr"
+	output: "<table><tr></tr></table>normal tag made standalone with bogus trunc attr"
 },
 {
 	id: 11,
 	input: "<table><tr color/></table>normal tag made standalone with trunc attr bad val",
-	output: "<table><tr /></table>normal tag made standalone with trunc attr bad val"
+	output: "<table><tr></tr></table>normal tag made standalone with trunc attr bad val"
 },
 {
 	id: 12,
@@ -648,7 +648,7 @@ var generalVectors = [
 {
 	id: 14,
 	input: "<table><tr size=\"4\"/></table>normal tag made standalone with value",
-	output: "<table><tr size=\"4\" /></table>normal tag made standalone with value"
+	output: "<table><tr size=\"4\"></tr></table>normal tag made standalone with value"
 },
 //style attribute tests
 {
@@ -779,7 +779,7 @@ var generalVectors = [
 {
 	id: 40,
 	input: "<option selected />",
-	output: "<option selected />"
+	output: "<option selected></option>"
 },
 {
 	id: 41,
@@ -799,7 +799,7 @@ var generalVectors = [
 {
 	id: 44,
 	input: "<option selected/>",
-	output: "<option selected />"
+	output: "<option selected></option>"
 },
 {
 	id: 45,
@@ -836,6 +836,11 @@ var generalVectors = [
 	id: 51,
 	input: "<img src=\"x\" id=\'\" onerror=\"alert(1)\' />",
 	output: "<img src=\"x\" id=\'\" onerror=\"alert(1)\' />"
+},
+{
+	id: 52,
+	input: "<a href='http://www.yahoo.com/' />hello",
+	output: "<a href='http://www.yahoo.com/'>hello</a>"
 }
 ];
 
