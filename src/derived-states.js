@@ -8,6 +8,9 @@ See the accompanying LICENSE file for terms.
 // this will eventually move to context parser and it will not be a sparse matrix
 // Transition table based on https://html.spec.whatwg.org/multipage/syntax.html
 var DerivedState = {};
+
+/*
+// used to generate DerivedState.Transitions 
 DerivedState.TransitionsSparse = {
     1:  {1: 1},
     10: {1: 2, 43: 6},
@@ -24,6 +27,7 @@ DerivedState.TransitionsSparse = {
     42: {1: 2, 43: 6},
     43: {1: 2},
 };
+*/
 
 DerivedState.TransitionName = {};
 
