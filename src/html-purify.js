@@ -9,7 +9,8 @@ See the accompanying LICENSE file for terms.
     var Parser = require('context-parser').Parser,
         tagAttList = require("./tag-attr-list"),
         derivedState = require('./derived-states.js'),
-        uriBlacklistFilter = require('xss-filters')._privFilters.yubl,
+        yubl = require('xss-filters')._privFilters.yubl,
+        uriBlacklistFilter = function(s){ return yubl(s.replace(/\x00/g, '%00')); },
         CssParser = require('css-js'),
         hrefAttribtues = tagAttList.HrefAttributes,
         voidElements = tagAttList.VoidElements;
