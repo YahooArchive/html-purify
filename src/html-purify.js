@@ -11,7 +11,7 @@ See the accompanying LICENSE file for terms.
         derivedState = require('./derived-states.js'),
         xssFilters = require('xss-filters'),
         CssParser = require('css-js'),
-        hrefAttribtues = tagAttList.HrefAttributes,
+        hrefAttributes = tagAttList.HrefAttributes,
         voidElements = tagAttList.VoidElements;
 
     function Purifier(config) {
@@ -116,7 +116,7 @@ See the accompanying LICENSE file for terms.
 
                             attrValString += ' ' + key;
                             if (value !== null) {
-                                attrValString += '="' + (hrefAttribtues[key] ? xssFilters.uriInDoubleQuotedAttr(decodeURI(value)) : value) + '"';
+                                attrValString += '="' + (hrefAttributes[key] ? xssFilters.uriInDoubleQuotedAttr(decodeURI(value)) : value) + '"';
                             }
                         }
                     }
