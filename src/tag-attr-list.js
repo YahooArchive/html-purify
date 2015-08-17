@@ -261,3 +261,6 @@ exports.HrefAttributes = {
 // Void elements only have a start tag; end tags must not be specified for void elements.
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 exports.VoidElements = {"area":1, "base":1, "br":1, "col":1, "embed":1, "hr":1, "img":1, "input":1, "keygen":1, "link":1, "menuitem":1, "meta":1, "param":1, "source":1, "track":1, "wbr":1};
+
+// https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
+exports.OptionalElements = {/*"plaintext":1, "html":1, "head":1, "body":1,*/ "li":1, "dt":1, "dd":1, "p":1, "rt":1, "rp":1, "optgroup":1, "option":1, "colgroup":1, "caption":1, "thead":1, "tbody":1, "tfoot":1, "tr":1, "td":1, "th":1};

@@ -12,7 +12,8 @@ See the accompanying LICENSE file for terms.
         xssFilters = require('xss-filters'),
         CssParser = require('css-js'),
         hrefAttributes = tagAttList.HrefAttributes,
-        voidElements = tagAttList.VoidElements;
+        voidElements = tagAttList.VoidElements,
+        optionalElements = tagAttList.OptionalElements;
 
     function Purifier(config) {
         var that = this;
@@ -41,14 +42,14 @@ See the accompanying LICENSE file for terms.
         that.cssParser = new CssParser({"ver": "strict", "throwError": false});
     }
 
-    // TODO: introduce polyfill for Array.indexOf
-    function contains(arr, element) {
-        for (var i = 0, len = arr.length; i < len; i++) {
+    // TODO: introduce polyfill for Array.lastIndexOf
+    function arrayLastIndexOf(arr, element) {
+        for (var i = arr.length - 1; i >= 0; i--) {
             if (arr[i] === element) {
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
     function processTransition(prevState, nextState, i) {
@@ -68,30 +69,40 @@ See the accompanying LICENSE file for terms.
             idx = parser.getCurrentTagIndex();
             tagName = parser.getCurrentTag(idx);
 
-            if (contains(this.tagsWhitelist, tagName)) {
+            if (arrayLastIndexOf(this.tagsWhitelist, tagName) !== -1) {
 
                 if (idx) {
-                    if (this.config.enableTagBalancing) {
-                        // add closing tags for any opened ones before closing the current one
-                        while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
-                            this.output += '</' + openedTag + '>';
+                    if (this.config.enableTagBalancing && !optionalElements[tagName]) {
+                        // relaxed tag balancing, accept it as long as the tag exists in the stack
+                        idx = arrayLastIndexOf(this.openedTags, tagName);
+
+                        if (idx >= 0) {
+                            this.output += '</' + tagName + '>';
+                            this.openedTags.splice(idx, 1);
                         }
-                        // openedTag is undefined if tagName is never found in all openedTags, no output needed
-                        if (openedTag) {
-                            this.output += '</' + openedTag + '>';
-                        }
+
+                        // // add closing tags for any opened ones before closing the current one
+                        // while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
+                        //     this.output += '</' + openedTag + '>';
+                        // }
+                        // // openedTag is undefined if tagName is never found in all openedTags, no output needed
+                        // if (openedTag) {
+                        //     this.output += '</' + openedTag + '>';
+                        // }
                     }
                     else {
                         this.output += '</' + tagName + '>';
                     }
                 }
                 else {
-                    //  - void elements only have a start tag; end tags must not be specified for void elements.
-                    this.hasSelfClosing = this.hasSelfClosing || voidElements[tagName];
+                    // void elements only have a start tag; end tags must not be specified for void elements.
+                    // this.hasSelfClosing = this.hasSelfClosing || voidElements[tagName];
+                    this.hasSelfClosing = voidElements[tagName];
 
                     // push the tagName into the openedTags stack if not found:
                     //  - a self-closing tag or a void element
-                    this.config.enableTagBalancing && !this.hasSelfClosing && this.openedTags.push(tagName);
+                    // this.config.enableTagBalancing && !this.hasSelfClosing && this.openedTags.push(tagName);
+                    this.config.enableTagBalancing && !this.hasSelfClosing && !optionalElements[tagName] && this.openedTags.push(tagName);
 
                     if (prevState === 35 ||
                         prevState === 36 ||
@@ -101,7 +112,7 @@ See the accompanying LICENSE file for terms.
 
                     attrValString = '';
                     for (key in this.attrVals) {
-                        if (contains(this.attributesWhitelist, key)) {
+                        if (arrayLastIndexOf(this.attributesWhitelist, key) !== -1) {
                             value = this.attrVals[key];
 
                             if (key === "style") { // TODO: move style to a const
@@ -123,12 +134,13 @@ See the accompanying LICENSE file for terms.
 
                     // handle self-closing tags
                     this.output += '<' + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
+                    // this.output += '<' + tagName + attrValString + '>';
 
                 }
             }
             // reinitialize once tag has been written to output
             this.attrVals = {};
-            this.hasSelfClosing = 0;
+            // this.hasSelfClosing = false;
             break;
 
         case derivedState.TransitionName.ATTR_TO_AFTER_ATTR:
@@ -148,7 +160,18 @@ See the accompanying LICENSE file for terms.
             if (prevState === 35) {
                 this.attrVals[parser.getAttributeName()] = null;
             }
-            this.hasSelfClosing = 1;
+
+            /* According to https://html.spec.whatwg.org/multipage/syntax.html#start-tags
+             * "Then, if the element is one of the void elements, or if the element is a foreign element, then there may be a single U+002F SOLIDUS character (/). 
+             * This character has no effect on void elements, but on foreign elements it marks the start tag as self-closing."
+             */ 
+            // that means only foreign elements can self-close (self-closing is optional for void elements)
+            // no foreign elements will be allowed, so the following logic can be commented
+            // openedTag = parser.getStartTagName();
+            // if (openedTag === 'svg' || openedTag === 'math') { // ...
+            //     this.hasSelfClosing = true;
+            // }
+            
             break;
         }
     }
@@ -159,7 +182,7 @@ See the accompanying LICENSE file for terms.
         that.output = '';
         that.openedTags = [];
         that.attrVals = {};
-        that.hasSelfClosing = 0;
+        // that.hasSelfClosing = false;
         that.parser.reset();
         that.parser.contextualize(data);
 
