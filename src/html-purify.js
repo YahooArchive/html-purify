@@ -20,8 +20,6 @@ See the accompanying LICENSE file for terms.
         config = config || {};
         // defaulted to true
         config.enableCanonicalization = config.enableCanonicalization !== false;
-        config.enableVoidingIEConditionalComments = config.enableVoidingIEConditionalComments !== false;
-
         config.enableTagBalancing = config.enableTagBalancing !== false;
 
         // accept array of tags to be whitelisted, default list in tag-attr-list.js
@@ -35,9 +33,9 @@ See the accompanying LICENSE file for terms.
             enableInputPreProcessing: true,
             enableStateTracking: false,
             enableCanonicalization: config.enableCanonicalization,
-            enableVoidingIEConditionalComments: config.enableVoidingIEConditionalComments
+            enableVoidingIEConditionalComments: false // comments are always stripped from the output anyway
         }).on('postWalk', function (lastState, state, i, endsWithEOF) {
-                processTransition.call(that, lastState, state, i);
+            processTransition.call(that, lastState, state, i);
         });
 
         that.cssParser = new CssParser({"ver": "strict", "throwError": false});
