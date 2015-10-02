@@ -65,7 +65,7 @@ Debug.enable(progname);
 		process.exit(1);
 	}
     } else {
-	    console.log("Usage: html-purifier <any html file>");
+	    console.log("Usage: html-purify <any html file>");
 	    process.exit(1);
     }
 
