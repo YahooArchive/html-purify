@@ -52,14 +52,14 @@ See the accompanying LICENSE file for terms.
         return false;
     }
 
-    function addQuoteToValue(action, value) {
-        if (action & derivedState.TransitionName.DQ_ATTR) {         // collect double quoted value
+    function addQuoteToValue(attrAction, value) {
+        if (attrAction === derivedState.TransitionName.DQ_ATTR) {         // collect double quoted value
             return '"' + value + '"';
         } 
-        else if (action & derivedState.TransitionName.SQ_ATTR) {    // collect single quoted value
+        else if (attrAction === derivedState.TransitionName.SQ_ATTR) {    // collect single quoted value
             return "'" + value + "'";
         } 
-        else /*if (action & derivedState.TransitionName.UQ_ATTR) {  // collect unquoted value */{
+        else /*if (attrAction === derivedState.TransitionName.UQ_ATTR) {  // collect unquoted value */{
             return value;
         }
     }
@@ -69,15 +69,16 @@ See the accompanying LICENSE file for terms.
         /* jshint expr: true */
         var parser = this.parser,
             action = derivedState.Transitions[prevState][nextState],
+            attrAction = action & 0x7,
             idx, tagName, attrValString, openedTag, key, value;
 
         // check if tag and/or attr is available for collection
         // collect the values (if any) only when the attr name is allowed
-        if (action & 0xF && contains(this.attributesWhitelist, (key = parser.getAttributeName()))) {
+        if (attrAction && contains(this.attributesWhitelist, (key = parser.getAttributeName()))) {
 
             // collect the attr name only
             // boolean attributes may not have a value
-            if (action & derivedState.TransitionName.NV_ATTR) {
+            if (attrAction === derivedState.TransitionName.NV_ATTR) {
                 this.attrVals[key] = null;
             }
             // collect both the attr name and value
@@ -87,21 +88,21 @@ See the accompanying LICENSE file for terms.
                 // store only valid style attribute value
                 if (key === 'style') {
                     if (this.cssParser.parseCssString(value)) {
-                        this.attrVals[key] = addQuoteToValue(action, value);
+                        this.attrVals[key] = addQuoteToValue(attrAction, value);
                     }
                 } 
                 // apply the blacklist filter for URI attr value
                 else if (hrefAttribtues[key]) {
-                    this.attrVals[key] = addQuoteToValue(action, uriBlacklistFilter(value));
+                    this.attrVals[key] = addQuoteToValue(attrAction, uriBlacklistFilter(value));
                 }
                 else {
-                    this.attrVals[key] = addQuoteToValue(action, value);
+                    this.attrVals[key] = addQuoteToValue(attrAction, value);
                 }
             }
         }
 
-        // drop the last 4 bits that indicate quoted status
-        switch (action & 0xF0) {
+        // mask out the last 3 bits that represent attr value action
+        switch (action & 0xF8) {
             
         case derivedState.TransitionName.WITHIN_DATA:
             this.output += parser.input[i];
