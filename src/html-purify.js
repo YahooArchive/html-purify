@@ -29,9 +29,9 @@ See the accompanying LICENSE file for terms.
         tagBalance = that.tagBalance = {};
         tagBalance.stackOverflow = false;
         if ((tagBalance.enabled = config.tagBalance.enabled !== false)) {
-            tagBalance.stackSize = parseInt(config.tagBalance.stackSize) || 100;
+            tagBalance.stackPtrMax = (parseInt(config.tagBalance.stackSize) || 100) - 1;
             tagBalance.stackPtr = 0;
-            tagBalance.stack = new Array(tagBalance.stackSize);
+            tagBalance.stack = new Array(tagBalance.stackPtrMax + 1);
         }
 
         // accept array of tags to be whitelisted, default list in tag-attr-list.js
@@ -54,11 +54,18 @@ See the accompanying LICENSE file for terms.
         
     }
 
-    // TODO: introduce polyfill for Array.lastIndexOf
+    // A simple polyfill for Array.lastIndexOf
     function arrayLastIndexOf(arr, element, fromIndex) {
-        for (var i = fromIndex === undefined ? arr.length - 1 : fromIndex; i >= 0; i--) {
-            if (arr[i] === element) {
-                return i;
+        if (arguments.length < 3) {
+            fromIndex = arr.length - 1;
+        }
+
+        if (Array.prototype.lastIndexOf) {
+            return arr.lastIndexOf(element, fromIndex);
+        }
+        for (; fromIndex >= 0; fromIndex--) {
+            if (arr[fromIndex] === element) {
+                return fromIndex;
             }
         }
         return -1;
@@ -85,7 +92,12 @@ See the accompanying LICENSE file for terms.
 
                 if (idx) {
                     if (tagBalance.enabled && !optionalElements[tagName]) {
-                        // relaxed tag balancing, accept it as long as the tag exists in the stack
+                        
+                        // Simple tag balancing: close the tag as long as it 
+                        // exists in the stack, as we only want to ensure the 
+                        // untrusted data must be self-contained. Hence, it can
+                        // not close any tags prior to its inclusion, nor leave
+                        // any of its own tags unclosed.
                         idx = arrayLastIndexOf(tagBalance.stack, tagName, tagBalance.stackPtr - 1);
 
                         if (idx >= 0) {
@@ -94,7 +106,7 @@ See the accompanying LICENSE file for terms.
                             tagBalance.stackPtr--;
                         }
 
-                        // // add closing tags for any opened ones before closing the current one
+                        // Pop-until-matched tag balancing: add closing tags for any opened ones before closing the matched one
                         // while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
                         //     this.output += '</' + openedTag + '>';
                         // }
@@ -109,20 +121,18 @@ See the accompanying LICENSE file for terms.
                 }
                 else {
                     // void elements only have a start tag; end tags must not be specified for void elements.
-                    // this.hasSelfClosing = this.hasSelfClosing || voidElements[tagName];
                     hasSelfClosing = voidElements[tagName];
 
                     // push the tagName into the openedTags stack if not found:
                     //  - a self-closing tag or a void element
-                    // this.config.tagBalance.enabled && !this.hasSelfClosing && this.openedTags.push(tagName);
                     if (tagBalance.enabled && !hasSelfClosing && !optionalElements[tagName]) {
-                        if (tagBalance.stackPtr < tagBalance.stackSize) {
-                            tagBalance.stack[tagBalance.stackPtr++] = tagName;
-                        } else {
-                            // cease processing anything if it exceeds the maximum stack size allowed
+                        // cease further processing if it exceeds the maximum stack size allowed
+                        if (tagBalance.stackPtr > tagBalance.stackPtrMax) {
                             tagBalance.stackOverflow = true;
-                            break;
+                            return;
                         }
+
+                        tagBalance.stack[tagBalance.stackPtr++] = tagName;
                     }
 
                     if (prevState === 35 ||
@@ -172,7 +182,7 @@ See the accompanying LICENSE file for terms.
 
         //case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
         //    this.output += "<" + parser.input[i];
-	    //    break;
+        //    break;
 
         case derivedState.TransitionName.TO_SELF_CLOSING_START:
             // boolean attributes may not have a value
@@ -196,30 +206,24 @@ See the accompanying LICENSE file for terms.
     }
 
     Purifier.prototype.purify = function (data) {
-        var that = this, i;
+        var that = this, i, 
+            tagBalance = that.tagBalance;
 
         that.attrVals = {};
         that.output = '';
 
-        if (that.tagBalance.enabled) {
-            that.tagBalance.stack = new Array(this.tagBalance.stackSize);
-            that.tagBalance.stackPtr = 0;
+        if (tagBalance.enabled) {
+            tagBalance.stack = new Array(tagBalance.stackPtrMax + 1);
+            tagBalance.stackPtr = 0;
         }
 
         that.parser.reset().contextualize(data);
 
-        if (that.tagBalance.enabled) {
-
-            // close any remaining openedTags
-            for (i = that.tagBalance.stackPtr - 1; i >= 0; i--) {
-                that.output += '</' + that.tagBalance.stack[i] + '>';
+        if (tagBalance.enabled) {
+            // close remaining opened tags, if any
+            for (i = tagBalance.stackPtr - 1; i >= 0; i--) {
+                that.output += '</' + tagBalance.stack[i] + '>';
             }
-            // if ((that.tagBalance.stack.length = that.tagBalance.stackPtr)) {
-            //     that.output += '</' + that.tagBalance.stack.join('></') + '>';
-            // }
-            // while((openedTag = this.openedTags.pop())) {
-            //     that.output += '</' + openedTag + '>';
-            // }
         }
 
         return that.output;
