@@ -69,7 +69,7 @@ See the accompanying LICENSE file for terms.
         /* jshint expr: true */
         var parser = this.parser,
             action = derivedState.Transitions[prevState][nextState],
-            attrAction = action & 0x7,
+            attrAction = action & 0xF,
             idx, tagName, attrValString, openedTag, key, value;
 
         // check if tag and/or attr is available for collection
@@ -101,8 +101,8 @@ See the accompanying LICENSE file for terms.
             }
         }
 
-        // mask out the last 3 bits that represent attr value action
-        switch (action & 0xF8) {
+        // mask out the last 4 bits that represent attr value action
+        switch (action & 0xF0) {
             
         case derivedState.TransitionName.WITHIN_DATA:
             this.output += parser.input[i];
