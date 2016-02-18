@@ -55,7 +55,7 @@ var html5secVectors = [
 {
 	id: 10,
 	input: "<video poster=javascript:alert(1)//></video>",
-	output: "<video poster=\"x-javascript:alert(1)//\"></video>"
+	output: "<video poster=x-javascript:alert(1)//></video>"
 },
 {
 	id: 11,
@@ -75,7 +75,7 @@ var html5secVectors = [
 {
 	id: 14,
 	input: "<input pattern=^((a+.)a)+$ value=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!>",
-	output: "<input pattern=\"^((a+.)a)+$\" value=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\" />"
+	output: "<input pattern=^((a+.)a)+$ value=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa! />"
 },
 {
 	id: 15,
@@ -120,7 +120,7 @@ var html5secVectors = [
 {
 	id: 23,
 	input: "<form id=test onforminput=alert(1)><input></form><button form=test onformchange=alert(2)>X</button>",
-	output: "<form id=\"test\"><input /></form><button form=\"test\">X</button>"
+	output: "<form id=test><input /></form><button form=test>X</button>"
 },
 {
 	id: 24,
@@ -180,7 +180,7 @@ var html5secVectors = [
 {
 	id: 35,
 	input: "1<a href=#><line xmlns=urn:schemas-microsoft-com:vml style=behavior:url(#default#vml);position:absolute href=javascript:alert(1) strokecolor=white strokeweight=1000px from=0 to=1000 /></a>",
-	output: "1<a href=\"#\"></a>"
+	output: "1<a href=#></a>"
 },
 {
 	id: 36,
@@ -190,32 +190,32 @@ var html5secVectors = [
 {
 	id: 37,
 	input: "<!--<img src=\"--><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"x\" />"
+	output: "<img src=x />"
 },
 {
 	id: 38,
 	input: "<comment><img src=\"</comment><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"%3C/comment%3E%3Cimg%20src=x%20onerror=alert(1)//\" />"
+	output: "<img src=\"</comment><img src=x onerror=alert(1)//\" />"
 },
 { 
 	id: 39, // TODO: confirm (this and certain doctype, xml ones)
 	input: "<!-- up to Opera 11.52, FF 3.6.28 -->\r\n<![><img src=\"]><img src=x onerror=alert(1)//\">\r\n\r\n<!-- IE9+, FF4+, Opera 11.60+, Safari 4.0.4+, GC7+ -->\r\n<svg><![CDATA[><image xlink:href=\"]]><img src=xx:x onerror=alert(2)//\"></svg>",
-	output: "\n<img src=\"%5D%3E%3Cimg%20src=x%20onerror=alert(1)//\" />\n\n\n"
+	output: "\n<img src=\"]><img src=x onerror=alert(1)//\" />\n\n\n"
 },
 {
 	id: 40,
 	input: "<style><img src=\"</style><img src=x onerror=alert(1)//\">",
-	output: "<img src=\"x\" />"
+	output: "<img src=x />"
 },
 {
 	id: 41,
 	input: "<li style=list-style:url() onerror=alert(1)></li>\n<div style=content:url(data:image/svg+xml,%3Csvg/%3E);visibility:hidden onload=alert(1)></div>",
-	output: "<li style=\"list-style:url()\"></li>\n<div style=\"content:url(data:image/svg+xml,%3Csvg/%3E);visibility:hidden\"></div>"
+	output: "<li style=list-style:url()></li>\n<div style=content:url(data:image/svg+xml,%3Csvg/%3E);visibility:hidden></div>"
 },
 {
 	id: 42,
 	input: "<head><base href=\"javascript://\"/></head><body><a href=\"/. /,alert(1)//#\">XXX</a></body>",
-	output: "<head><base href=\"x-javascript://\" /></head><body><a href=\"/.%20/,alert(1)//#\">XXX</a></body>"
+	output: "<head><base href=\"x-javascript://\" /></head><body><a href=\"/. /,alert(1)//#\">XXX</a></body>"
 },
 {
 	id: 43,
@@ -355,7 +355,7 @@ var html5secVectors = [
 {
 	id: 71,
 	input: "<div style=width:1px;filter:glow onfilterchange=alert(1)>x</div>",
-	output: "<div style=\"width:1px;filter:glow\">x</div>"
+	output: "<div style=width:1px;filter:glow>x</div>"
 },
 {
 	id: 72,
@@ -455,7 +455,7 @@ var html5secVectors = [
 {
 	id: 91,
 	input: "<!-- Up to Opera 10.63 -->\r\n<div style=content:url(test2.svg)></div>\r\n\r\n<!-- Up to Opera 11.64 - see link below -->\r\n\r\n<!-- Up to Opera 12.x -->\r\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>",
-	output: "\n<div style=\"content:url(test2.svg)\"></div>\n\n\n\n\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>"
+	output: "\n<div style=content:url(test2.svg)></div>\n\n\n\n\n<div style=\"background:url(test5.svg)\">PRESS ENTER</div>"
 },
 {
 	id: 92,
@@ -490,12 +490,12 @@ var html5secVectors = [
 {
 	id: 98,
 	input: "<!-- IE 5-9 -->\r\n<div id=d><x xmlns=\"><iframe onload=alert(1)\"></div>\n<script>d.innerHTML+=\'\';</script>\r\n\r\n<!-- IE 10 in IE5-9 Standards mode -->\r\n<div id=d><x xmlns=\'\"><iframe onload=alert(2)//\'></div>\n<script>d.innerHTML+=\'\';</script>",
-	output: "\n<div id=\"d\"></div>\n\n\n\n<div id=\"d\"></div>\n"
+	output: "\n<div id=d></div>\n\n\n\n<div id=d></div>\n"
 },
 {
 	id: 99,
 	input: "<div id=d><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n<script>with(document.getElementById(\"d\"))innerHTML=innerHTML</script>",
-	output: "<div id=\"d\"><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n"
+	output: "<div id=d><div style=\"font-family:\'sans\\27\\2F\\2A\\22\\2A\\2F\\3B color\\3Ared\\3B\'\">X</div></div>\n"
 },
 {
 	id: 100,
@@ -510,12 +510,12 @@ var html5secVectors = [
 {
 	id: 102,
 	input: "<a href=\"[a]java[b]script[c]:alert(1)\">XXX</a>",
-	output: "<a href=\"%5Ba%5Djava%5Bb%5Dscript%5Bc%5D:alert(1)\">XXX</a>"
+	output: "<a href=\"[a]java[b]script[c]:alert(1)\">XXX</a>"
 },
 {
 	id: 103,
 	input: "<img src=\"x` `<script>alert(1)</script>\"` `>",
-	output: "<img src=\"x%60%20%60%3Cscript%3Ealert(1)%3C/script%3E\" />"
+	output: "<img src=\"x` `<script>alert(1)</script>\" />"
 },
 {
 	id: 104,
@@ -545,7 +545,7 @@ var html5secVectors = [
 {
 	id: 109,
 	input: "<!-- IE 5-8 standards mode -->\r\n<a href=http://foo.bar/#x=`y></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\">\r\n\r\n<!-- IE 5-9 standards mode -->\r\n<!a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(2)//\">\r\n<?a foo=x=`y><img alt=\"`><img src=xx:x onerror=alert(3)//\">",
-	output: "\n<a href=\"http://foo.bar/#x&#61;&#96;y\"></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\" />\n\n\n<img alt=\"`><img src=xx:x onerror=alert(2)//\" />\n<img alt=\"`><img src=xx:x onerror=alert(3)//\" />"
+	output: "\n<a href=http://foo.bar/#x&#61;&#96;y></a><img alt=\"`><img src=xx:x onerror=alert(1)></a>\" />\n\n\n<img alt=\"`><img src=xx:x onerror=alert(2)//\" />\n<img alt=\"`><img src=xx:x onerror=alert(3)//\" />"
 },
 {
 	id: 110,
@@ -628,12 +628,12 @@ var generalVectors = [
 {
 	id: 10,
 	input: "<table><tr bz/></table>normal tag made standalone with bogus trunc attr",
-	output: "<table><tr /></table>normal tag made standalone with bogus trunc attr"
+	output: "<table><tr></tr></table>normal tag made standalone with bogus trunc attr"
 },
 {
 	id: 11,
 	input: "<table><tr color/></table>normal tag made standalone with trunc attr bad val",
-	output: "<table><tr /></table>normal tag made standalone with trunc attr bad val"
+	output: "<table><tr></tr></table>normal tag made standalone with trunc attr bad val"
 },
 {
 	id: 12,
@@ -648,7 +648,7 @@ var generalVectors = [
 {
 	id: 14,
 	input: "<table><tr size=\"4\"/></table>normal tag made standalone with value",
-	output: "<table><tr size=\"4\" /></table>normal tag made standalone with value"
+	output: "<table><tr size=\"4\"></tr></table>normal tag made standalone with value"
 },
 //style attribute tests
 {
@@ -669,7 +669,7 @@ var generalVectors = [
 {
 	id: 18,
 	input: "<div style=' color: blue;'>rodent 2 is ok</div>",
-	output: "<div style=\" color: blue;\">rodent 2 is ok</div>"
+	output: "<div style=' color: blue;'>rodent 2 is ok</div>"
 },
 {
 	id: 19,
@@ -679,7 +679,7 @@ var generalVectors = [
 {
 	id: 20,
 	input: "<div style=' color: blue '>rodent 4 is ok</div>",
-	output: "<div style=\" color: blue \">rodent 4 is ok</div>"
+	output: "<div style=' color: blue '>rodent 4 is ok</div>"
 },
 {
 	id: 21,
@@ -699,7 +699,7 @@ var generalVectors = [
 {
 	id: 24,
 	input: "<div style=>no style value at all</div>",
-	output: "<div style=\"\">no style value at all</div>"
+	output: "<div style>no style value at all</div>"
 },
 {
 	id: 25,
@@ -734,7 +734,7 @@ var generalVectors = [
 {
 	id: 31,
 	input: "<div style=color:blue>unquoted style attribute</div>",
-	output: "<div style=\"color:blue\">unquoted style attribute</div>"
+	output: "<div style=color:blue>unquoted style attribute</div>"
 },
 {
 	id: 32,
@@ -779,7 +779,7 @@ var generalVectors = [
 {
 	id: 40,
 	input: "<option selected />",
-	output: "<option selected />"
+	output: "<option selected></option>"
 },
 {
 	id: 41,
@@ -799,17 +799,17 @@ var generalVectors = [
 {
 	id: 44,
 	input: "<option selected/>",
-	output: "<option selected />"
+	output: "<option selected></option>"
 },
 {
 	id: 45,
 	input: "<img id=\'foo\'/>",
-	output: "<img id=\"foo\" />"
+	output: "<img id=\'foo\' />"
 },
 {
 	id: 46,
 	input: "<img id=\'foo\' />",
-	output: "<img id=\"foo\" />"
+	output: "<img id=\'foo\' />"
 },
 {
 	id: 47,
@@ -819,7 +819,7 @@ var generalVectors = [
 {
 	id: 48,
 	input: "<img id=\'\' />",
-	output: "<img id=\"\" />"
+	output: "<img id=\'\' />"
 },
 {
 	id: 49,
@@ -831,6 +831,16 @@ var generalVectors = [
 	id: 50,
 	input: "abc <!-- 123",
 	output: "abc "
+},
+{
+	id: 51,
+	input: "<img src=\"x\" id=\'\" onerror=\"alert(1)\' />",
+	output: "<img src=\"x\" id=\'\" onerror=\"alert(1)\' />"
+},
+{
+	id: 52,
+	input: "<a href='http://www.yahoo.com/' />hello",
+	output: "<a href='http://www.yahoo.com/'>hello</a>"
 }
 ];
 
