@@ -13,9 +13,9 @@ after_success:
 - test $(cat $TRAVIS_BUILD_DIR/package.json | grep version | awk '{print $2}' | sed 's/"//g' | sed 's/,//g' | awk '{print "v"$1}' ) = $TRAVIS_TAG && test $(echo $TRAVIS_NODE_VERSION | awk '{print $1}' ) = '0.12' && export VALID_VERSION=true
 deploy:
   provider: npm
-  email: neraliu@yahoo-inc.com
+  email: a.mahendrakar@yahoo.com
   api_key:
-    secure: rgNSDdkS+FStqWW7K8KMb8IrB0KXvFma7jcYgjkvHIapxH2RIg/vQA02FXFSgwcJFzDvdMHoNzqamgaM2gEhf+N48G5Ym5w1h+lgsq8yKUROETCFmVxgUSGtxzSqpzwCevdGTN0fmQOIX+FmxSisKm3QTjU04a1hW6tMQp8jPDbxV51kRdy/xluo5ODkbFBKqhEJzFaPkrhXlLvK4UYF+ytNjskOEaoYvlo0rIFMrJg8tX9gAWhcwf4seCmDz7V4jk5Spnmh7uYdQCdtte6qifTh334gb+T8PZslIHnY2UwlONz/pqruXApQpN0VCsJPowjpvVKF5VVBdKPJ57RwedroNpgI2MNjQw7yb1raJZbD0ywUiOe7Ug2+ETWZAye+e0NsdeC++bTxNNpFvA+Ic1XmoDDdALDmlNzJVaOmGqX74Dbap/vawUgtXljtGTWcFMwNjI7/peaAzFYGQN4/XAd4TJmwrHDiPQssaJPSz4f9ACRIQ0Q6/34ehY1UMHhoUJnPGzAAv2FRQoLIzPiOdCPPx3rzHDQVy9ciutJ5g0UQZG/5SgTtvZIEUip80LLZaQ/WuZoNiJ31DgmJE6dGufeNwVuhlZBXUX6iPc2RMxJSYVz/lTDr0lV+rdveI/AbYG3WcKHqTU0AOKfqPiYawxXJgyeNMCcBtjMm9zotWV8=
+    secure: d8XsYmny+/sI8n+6KXVvkYQTLVFBkI6sWk0re8Q06oDmmPFnT2ewKyrJgMOjlFsyNkMtN3a1eiIIOYTdRXj4wGDNtqvPgjIyMVVhIrVtF0JNVVx9VUEnvRDlPtqjlDk7UE3OORvFvjDcDlcv9CFoqxLA3v63X4MiVMKP13C3KMTjYj3eocS7HjnM/3QwOKWv+LlFYda2TWiGkCN/4n4PWahpZQQH6d8Cd1oejbEGx21Ozmn7fUA9tKeCdaqD58oMstY+NxOCHvdF+DR5x8VFoUGQ3WC78uc8vjEiS7n+jmJjidJlFSNnHJnBnCHe4At1tLFuH+rkx87YZNrC6g2uF9V/N3w569LN4+2S5c9hlw6p9n6tzzlxPcmSeMSj7ySoBDviF9McBm+J7/xlGxCWkHRpbPiucosgCTwq66W+0QIFBBerBUq3/gGPKNVd7exNVJixLVs4NVQHk06x2zMpkgI6lq9b6RhVyqMbcelst/MjQ5WQy8Rz4OjSIpbD3zE7juB1JMrpfvpOodoT1xWbhlW25Idc0MOlpnS3aLuo3fT/GFkOqxtiwmsS/KhsMYDqewgHcBehllebnPH/c7UMu7bG/phI0EusJUzr43uGye4oa3MiHwplxdwocdsrIJizPrmWzaSYeE7TyA4jfLnunPi6O6Rnz7fxM4Grb5U5Zjs=
   on:
     condition: $VALID_VERSION = true
     tags: true
