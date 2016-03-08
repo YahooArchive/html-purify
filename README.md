@@ -32,6 +32,36 @@ var input = '...';
 var result = purifier.purify(input);
 ```
 
+## Advanced Usage
+
+The following outlines the configuration that is secure by default. You should perform due dilligence to confirm your use cases are safe before disabling or altering the configurations.
+
+```js
+// The default configuration
+new Purifier({
+	whitelistTags: ['a', '...'],
+	whitelistAttributes: ['href', '...'],
+	enableCanonicalization: true,
+	tagBalance: {
+		enabled: true,
+		stackSize: 100
+	}
+});
+```
+
+<!--
+#### whitelistTags
+
+#### whitelistAttributes
+
+#### enableCanonicalization
+-->
+
+#### tagBalance
+The untrusted data must be self-contained. Hence, it cannot close any tags prior to its inclusion, nor leave any of its own tags unclosed. An efficient and simple tag balancing algorithm is applied by default to enforce this goal only, and may not produce perfectly nested output. You may implement another tag balancing algorithm before invoking purify. But the default one should still be enabled, unless you're sure the self-contained requirement is met.
+
+The ``stackSize`` (default: 100) is a limit imposed on the maximum number of unclosed tags (or the max levels of nested tags). When an untrusted data attempts to open tags that are so nested and has exceeded the allowed limit, the algorithm will cease any further processing but simply close all of those tags.
+
 ## Development
 
 ### How to build

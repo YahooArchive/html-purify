@@ -11,16 +11,28 @@ See the accompanying LICENSE file for terms.
         derivedState = require('./derived-states.js'),
         xssFilters = require('xss-filters'),
         CssParser = require('css-js'),
-        hrefAttribtues = tagAttList.HrefAttributes,
-        voidElements = tagAttList.VoidElements;
+        hrefAttributes = tagAttList.HrefAttributes,
+        voidElements = tagAttList.VoidElements,
+        optionalElements = tagAttList.OptionalElements;
 
+    /*jshint -W030 */
     function Purifier(config) {
-        var that = this;
+        var that = this, tagBalance;
 
         config = config || {};
         // defaulted to true
         config.enableCanonicalization = config.enableCanonicalization !== false;
-        config.enableTagBalancing = config.enableTagBalancing !== false;
+        config.enableVoidingIEConditionalComments = config.enableVoidingIEConditionalComments !== false;
+    
+        // defaulted to true
+        config.tagBalance || (config.tagBalance = {});
+        tagBalance = that.tagBalance = {};
+        tagBalance.stackOverflow = false;
+        if ((tagBalance.enabled = config.tagBalance.enabled !== false)) {
+            tagBalance.stackPtrMax = (parseInt(config.tagBalance.stackSize) || 100) - 1;
+            tagBalance.stackPtr = 0;
+            tagBalance.stack = new Array(tagBalance.stackPtrMax + 1);
+        }
 
         // accept array of tags to be whitelisted, default list in tag-attr-list.js
         that.tagsWhitelist = config.whitelistTags || tagAttList.WhiteListTags;
@@ -35,28 +47,36 @@ See the accompanying LICENSE file for terms.
             enableCanonicalization: config.enableCanonicalization,
             enableVoidingIEConditionalComments: false // comments are always stripped from the output anyway
         }).on('postWalk', function (lastState, state, i, endsWithEOF) {
-            processTransition.call(that, lastState, state, i);
+            !tagBalance.stackOverflow && processTransition.call(that, lastState, state, i);
         });
 
         that.cssParser = new CssParser({"ver": "strict", "throwError": false});
+        
     }
 
-    // TODO: introduce polyfill for Array.indexOf
-    function contains(arr, element) {
-        for (var i = 0, len = arr.length; i < len; i++) {
-            if (arr[i] === element) {
-                return true;
+    // A simple polyfill for Array.lastIndexOf
+    function arrayLastIndexOf(arr, element, fromIndex) {
+        if (arguments.length < 3) {
+            fromIndex = arr.length - 1;
+        }
+
+        if (Array.prototype.lastIndexOf) {
+            return arr.lastIndexOf(element, fromIndex);
+        }
+        for (; fromIndex >= 0; fromIndex--) {
+            if (arr[fromIndex] === element) {
+                return fromIndex;
             }
         }
-        return false;
+        return -1;
     }
 
     function processTransition(prevState, nextState, i) {
         /* jshint validthis: true */
         /* jshint expr: true */
         var parser = this.parser,
-            idx, tagName, attrValString, openedTag, key, value;
-
+            tagBalance = this.tagBalance,
+            idx = 0, tagName = '', attrValString = '', key = '', value = '', hasSelfClosing = 0;
         
         switch (derivedState.Transitions[prevState][nextState]) {
             
@@ -68,30 +88,52 @@ See the accompanying LICENSE file for terms.
             idx = parser.getCurrentTagIndex();
             tagName = parser.getCurrentTag(idx);
 
-            if (contains(this.tagsWhitelist, tagName)) {
+            if (arrayLastIndexOf(this.tagsWhitelist, tagName) !== -1) {
 
                 if (idx) {
-                    if (this.config.enableTagBalancing) {
-                        // add closing tags for any opened ones before closing the current one
-                        while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
-                            this.output += '</' + openedTag + '>';
+                    if (tagBalance.enabled && !optionalElements[tagName]) {
+                        
+                        // Simple tag balancing: close the tag as long as it 
+                        // exists in the stack, as we only want to ensure the 
+                        // untrusted data must be self-contained. Hence, it can
+                        // not close any tags prior to its inclusion, nor leave
+                        // any of its own tags unclosed.
+                        idx = arrayLastIndexOf(tagBalance.stack, tagName, tagBalance.stackPtr - 1);
+
+                        if (idx >= 0) {
+                            this.output += '</' + tagName + '>';
+                            tagBalance.stack.splice(idx, 1);
+                            tagBalance.stackPtr--;
                         }
-                        // openedTag is undefined if tagName is never found in all openedTags, no output needed
-                        if (openedTag) {
-                            this.output += '</' + openedTag + '>';
-                        }
+
+                        // Pop-until-matched tag balancing: add closing tags for any opened ones before closing the matched one
+                        // while((openedTag = this.openedTags.pop()) && openedTag !== tagName) {
+                        //     this.output += '</' + openedTag + '>';
+                        // }
+                        // // openedTag is undefined if tagName is never found in all openedTags, no output needed
+                        // if (openedTag) {
+                        //     this.output += '</' + openedTag + '>';
+                        // }
                     }
                     else {
                         this.output += '</' + tagName + '>';
                     }
                 }
                 else {
-                    //  - void elements only have a start tag; end tags must not be specified for void elements.
-                    this.hasSelfClosing = this.hasSelfClosing || voidElements[tagName];
+                    // void elements only have a start tag; end tags must not be specified for void elements.
+                    hasSelfClosing = voidElements[tagName];
 
                     // push the tagName into the openedTags stack if not found:
                     //  - a self-closing tag or a void element
-                    this.config.enableTagBalancing && !this.hasSelfClosing && this.openedTags.push(tagName);
+                    if (tagBalance.enabled && !hasSelfClosing && !optionalElements[tagName]) {
+                        // cease further processing if it exceeds the maximum stack size allowed
+                        if (tagBalance.stackPtr > tagBalance.stackPtrMax) {
+                            tagBalance.stackOverflow = true;
+                            return;
+                        }
+
+                        tagBalance.stack[tagBalance.stackPtr++] = tagName;
+                    }
 
                     if (prevState === 35 ||
                         prevState === 36 ||
@@ -99,9 +141,8 @@ See the accompanying LICENSE file for terms.
                         this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
                     }
 
-                    attrValString = '';
                     for (key in this.attrVals) {
-                        if (contains(this.attributesWhitelist, key)) {
+                        if (arrayLastIndexOf(this.attributesWhitelist, key) !== -1) {
                             value = this.attrVals[key];
 
                             if (key === "style") { // TODO: move style to a const
@@ -116,19 +157,19 @@ See the accompanying LICENSE file for terms.
 
                             attrValString += ' ' + key;
                             if (value !== null) {
-                                attrValString += '="' + (hrefAttribtues[key] ? xssFilters.uriInDoubleQuotedAttr(decodeURI(value)) : value) + '"';
+                                attrValString += '="' + (hrefAttributes[key] ? xssFilters.uriInDoubleQuotedAttr(decodeURI(value)) : value) + '"';
                             }
                         }
                     }
 
                     // handle self-closing tags
-                    this.output += '<' + tagName + attrValString + (this.hasSelfClosing ? ' />' : '>');
+                    this.output += '<' + tagName + attrValString + (hasSelfClosing ? ' />' : '>');
+                    // this.output += '<' + tagName + attrValString + '>';
 
                 }
             }
             // reinitialize once tag has been written to output
             this.attrVals = {};
-            this.hasSelfClosing = 0;
             break;
 
         case derivedState.TransitionName.ATTR_TO_AFTER_ATTR:
@@ -141,32 +182,47 @@ See the accompanying LICENSE file for terms.
 
         //case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
         //    this.output += "<" + parser.input[i];
-	    //    break;
+        //    break;
 
         case derivedState.TransitionName.TO_SELF_CLOSING_START:
             // boolean attributes may not have a value
             if (prevState === 35) {
                 this.attrVals[parser.getAttributeName()] = null;
             }
-            this.hasSelfClosing = 1;
+
+            /* According to https://html.spec.whatwg.org/multipage/syntax.html#start-tags
+             * "Then, if the element is one of the void elements, or if the element is a foreign element, then there may be a single U+002F SOLIDUS character (/). 
+             * This character has no effect on void elements, but on foreign elements it marks the start tag as self-closing."
+             */ 
+            // that means only foreign elements can self-close (self-closing is optional for void elements)
+            // no foreign elements will be allowed, so the following logic can be commented
+            // openedTag = parser.getStartTagName();
+            // if (openedTag === 'svg' || openedTag === 'math') { // ...
+            //     this.hasSelfClosing = true;
+            // }
+            
             break;
         }
     }
 
     Purifier.prototype.purify = function (data) {
-        var that = this, openedTag;
+        var that = this, i, 
+            tagBalance = that.tagBalance;
 
-        that.output = '';
-        that.openedTags = [];
         that.attrVals = {};
-        that.hasSelfClosing = 0;
-        that.parser.reset();
-        that.parser.contextualize(data);
+        that.output = '';
 
-        if (that.config.enableTagBalancing) {
-            // close any remaining openedTags
-            while((openedTag = this.openedTags.pop())) {
-                that.output += '</' + openedTag + '>';
+        if (tagBalance.enabled) {
+            tagBalance.stack = new Array(tagBalance.stackPtrMax + 1);
+            tagBalance.stackPtr = 0;
+        }
+
+        that.parser.reset().contextualize(data);
+
+        if (tagBalance.enabled) {
+            // close remaining opened tags, if any
+            for (i = tagBalance.stackPtr - 1; i >= 0; i--) {
+                that.output += '</' + tagBalance.stack[i] + '>';
             }
         }
 
