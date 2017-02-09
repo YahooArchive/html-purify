@@ -11,8 +11,14 @@ See the accompanying LICENSE file for terms.
         derivedState = require('./derived-states.js'),
         xssFilters = require('xss-filters'),
         CssParser = require('css-js'),
-        hrefAttribtues = tagAttList.HrefAttributes,
-        voidElements = tagAttList.VoidElements;
+        hrefAttributes = tagAttList.HrefAttributes,
+        voidElements = tagAttList.VoidElements,
+        attrFilter = {
+            38: xssFilters.uriInDoubleQuotedAttr,
+            39: xssFilters.uriInSingleQuotedAttr,
+            40: xssFilters.uriInUnQuotedAttr
+        },
+        quote = {38: '"', 39: '\'', 40: ''};
 
     function Purifier(config) {
         var that = this;
@@ -51,11 +57,13 @@ See the accompanying LICENSE file for terms.
         return false;
     }
 
+
     function processTransition(prevState, nextState, i) {
         /* jshint validthis: true */
         /* jshint expr: true */
         var parser = this.parser,
-            idx, tagName, attrValString, openedTag, key, value;
+            idx, tagName, attrValString, openedTag, key, value,
+            quoteState, quoteChar, attrValObj;
 
         
         switch (derivedState.Transitions[prevState][nextState]) {
@@ -96,13 +104,18 @@ See the accompanying LICENSE file for terms.
                     if (prevState === 35 ||
                         prevState === 36 ||
                         prevState === 40) {
-                        this.attrVals[parser.getAttributeName()] = parser.getAttributeValue();
+                        this.attrVals.push({
+                            'name': parser.getAttributeName(),
+                            'value': parser.getAttributeValue(),
+                            'quoteState': prevState
+                        });
                     }
 
                     attrValString = '';
-                    for (key in this.attrVals) {
+                    for (var j = 0, len = this.attrVals.length ; j < len; j++) {
+                        key = this.attrVals[j].name;
                         if (contains(this.attributesWhitelist, key)) {
-                            value = this.attrVals[key];
+                            value = this.attrVals[j].value;
 
                             if (key === "style") { // TODO: move style to a const
                                 if (value === null) {
@@ -116,7 +129,9 @@ See the accompanying LICENSE file for terms.
 
                             attrValString += ' ' + key;
                             if (value !== null) {
-                                attrValString += '="' + (hrefAttribtues[key] ? xssFilters.uriInDoubleQuotedAttr(decodeURI(value)) : value) + '"';
+                                quoteState = this.attrVals[j].quoteState;
+                                quoteChar = quote[quoteState];
+                                attrValString += '=' + quoteChar + (hrefAttributes[key] ? attrFilter[quoteState](decodeURI(value)) : value) + quoteChar;
                             }
                         }
                     }
@@ -127,16 +142,36 @@ See the accompanying LICENSE file for terms.
                 }
             }
             // reinitialize once tag has been written to output
-            this.attrVals = {};
+            this.attrVals = [];
             this.hasSelfClosing = 0;
             break;
 
         case derivedState.TransitionName.ATTR_TO_AFTER_ATTR:
-            this.attrVals[parser.getAttributeName()] = null;
+            //this.attrVals[parser.getAttributeName()]['value'] = null;
+            this.attrVals.push({
+                'name': parser.getAttributeName(),
+                'value': null
+            });
             break;
 
         case derivedState.TransitionName.ATTR_VAL_TO_AFTER_ATTR_VAL:
-            this.attrVals[parser.getAttributeName()] = parser.getAttributeValue() || '';
+            // remove the element
+            attrValObj = {
+                'name': parser.getAttributeName(),
+                'value': parser.getAttributeValue() || '',
+                'quoteState': prevState
+            };
+
+            idx = this.attrVals.length - 1;
+            
+            // if the attribute was added to attrVals in case ATTR_TO_AFTER_ATTR,
+            // then rewrite its value
+            if (this.attrVals.length > 0 && this.attrVals[idx].name === parser.getAttributeName() ){
+                this.attrVals[idx] = attrValObj;
+
+            } else {
+                this.attrVals.push(attrValObj);
+            }
             break;
 
         //case derivedState.TransitionName.TAG_OPEN_TO_MARKUP_OPEN:
@@ -146,7 +181,10 @@ See the accompanying LICENSE file for terms.
         case derivedState.TransitionName.TO_SELF_CLOSING_START:
             // boolean attributes may not have a value
             if (prevState === 35) {
-                this.attrVals[parser.getAttributeName()] = null;
+                this.attrVals.push({
+                    'name': parser.getAttributeName(),
+                    'value': null
+                });
             }
             this.hasSelfClosing = 1;
             break;
@@ -158,7 +196,7 @@ See the accompanying LICENSE file for terms.
 
         that.output = '';
         that.openedTags = [];
-        that.attrVals = {};
+        that.attrVals = [];
         that.hasSelfClosing = 0;
         that.parser.reset();
         that.parser.contextualize(data);
